@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webchannel测试</title>
+</head>
+<body>
+    <script type="text/javascript" src="./qwebchannel.js"></script>
+    <script type="text/javascript" src="./rea.js"></script>
+    <script type="text/javascript" src="./test.js"></script>
+    <div id='root'>
+    </div>
+    <input id="待发送消息" type="text" name="msgText" />
+    <input type="button" value="unitTest" onclick="onBtnSendMsg()" />
+    <input type="button" value="showImage" onclick="onBtnShowImage()" />
+    <input type="button" value="clearGarbage" onclick="onBtnClearGarbage()" />
+    <canvas id ="cvs" width="400" height="300" style="border: 1px solid black"></canvas>
+</body>
+</html>
