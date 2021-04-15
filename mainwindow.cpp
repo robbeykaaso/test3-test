@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     m_webChannel = new QWebChannel();
     m_webChannel->registerObject("Pipeline", rea::pipeline::instance("js"));
     m_webView->page()->setWebChannel(m_webChannel);
-    m_webView->setUrl(QUrl("file:/html/test.html"));
+    m_webView->setUrl(QApplication::applicationDirPath() + "/html/test.html");
 
     rea::pipeline::instance()->supportType<JsContext*>();
     m_jsContext = new JsContext();
@@ -212,20 +212,22 @@ void MainWindow::unitTest(){
         )
 
     addTest(test11,
+            auto pip = rea::pipeline::instance()->add<int>([](rea::stream<int>* aInput){
+                assert(aInput->data() == 3);
+                aInput->outs<QString>("Pass: test11", "testSuccess");
+            });
             rea::pipeline::instance()->add<int>([](rea::stream<int>* aInput){
                 assert(aInput->data() == 3);
                 aInput->out();
             }, rea::Json("name", "test11"))
-                ->nextP(rea::pipeline::instance()->add<int>([](rea::stream<int>* aInput){
-                    assert(aInput->data() == 3);
-                    aInput->outs<QString>("Pass: test11", "testSuccess");
-                }))
+                ->nextP(pip)
                 ->next("testSuccess");
 
             rea::pipeline::instance()->run<int>("test11", 3);
+            rea::pipeline::instance()->remove(pip->actName());
         )
 
-    addTest(test12,
+        rea::m_tests.insert("test12_",[](){
             rea::pipeline::instance()->add<int>([](rea::stream<int>* aInput){
                 assert(aInput->data() == 4);
                 std::stringstream ss;
@@ -237,11 +239,13 @@ void MainWindow::unitTest(){
                     ss << std::this_thread::get_id();
                     assert(ss.str() != aInput->data());
                     aInput->outs<QString>("Pass: test12", "testSuccess");
-                }, rea::Json("name", "test12_0", "thread", 2)))
+                }, rea::Json("name", "test12_0", "thread", 7)))
                 ->next("testSuccess");
+        });
 
+        rea::m_tests.insert("test12",[](){
             rea::pipeline::instance()->run<int>("test12", 4);
-        )
+        });
 
     }
 
@@ -285,11 +289,11 @@ void MainWindow::unitTest(){
             ->nextPB(rea::pipeline::instance()->add<int>([](rea::stream<int>* aInput){
                         assert(aInput->data() == 77);
                         aInput->outs<QString>("Pass: test14", "testSuccess");
-                    }), "test14")
+                    }, rea::Json("name", "test14_")), "test14")
             ->nextP(rea::pipeline::instance()->add<int>([](rea::stream<int>* aInput){
                        assert(aInput->data() == 77);
                        aInput->outs<QString>("Fail: test14", "testFail");
-                   }), "test14_");
+                   }, rea::Json("name", "test14__")), "test14_");
 
             rea::pipeline::instance()->run<int>("test14", 66, "test14");
         });
@@ -365,11 +369,11 @@ void MainWindow::unitTest(){
         rea::pipeline::instance()->input<int>(0, "test22")
             ->asyncCallF<int>([](rea::stream<int>* aInput){
                 aInput->setData(aInput->data() + 1)->out();
-            }, rea::Json("thread", 1))
+            }, rea::Json("thread", 2))
             ->asyncCallF<QString>([](rea::stream<int>* aInput){
                 assert(aInput->data() == 1);
                 aInput->outs<QString>("world");
-            }, rea::Json("thread", 2))
+            }, rea::Json("thread", 3))
             ->asyncCallF<QString>([](rea::stream<QString>* aInput){
                 assert(aInput->data() == "world");
                 aInput->setData("Pass: test22")->out();
@@ -384,12 +388,16 @@ void MainWindow::unitTest(){
         }, rea::Json("name", "test24", "thread", 5, "external", "js"));
     });
 
-    rea::m_tests.insert("test25", [](){
+    static int tick = 0;
+    rea::m_tests.insert("test25_", [](){
         rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
             rea::pipeline::instance()->input<double>(25, "test25")
                 ->asyncCall<QString>("test25")
                 ->asyncCall("testSuccess");
-        }, rea::Json("name", "test25_", "thread", 1));
+        }, rea::Json("name", "test25_", "thread", 4));
+    });
+
+    rea::m_tests.insert("test25", [](){
         rea::pipeline::instance()->run<double>("test25_", 0);
     });
 
@@ -433,7 +441,7 @@ void MainWindow::unitTest(){
     {
     rea::m_tests.insert("test27", [](){
         auto tmp = foo(6);
-        rea::pipeline::instance()->add<int>(foo(2));
+        //rea::pipeline::instance()->add<int>(foo(2));
         rea::pipeline::instance()->input<int>(3)
             ->asyncCallF<int>(foo(2))
             ->asyncCallF<int>(std::bind1st(std::mem_fun(&foo::memberFoo), &tmp))
@@ -466,7 +474,7 @@ void MainWindow::unitTest(){
         rea::pipeline::instance()->run<JsContext*>("test29", m_jsContext, "", sp);
     });
 
-    rea::m_tests.insert("test30", [](){
+    rea::m_tests.insert("test31_", [](){
         static std::mutex mtx;
         rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
                 aInput->scope()->cache<std::shared_ptr<QSet<QThread*>>>("threads", std::make_shared<QSet<QThread*>>())
@@ -483,7 +491,8 @@ void MainWindow::unitTest(){
                     aInput->scope()->cache<int>("count", aInput->scope()->data<int>("count") + 1);
                 }
                 aInput->out();
-            }))->nextF<double>([](rea::stream<double>* aInput){
+            }, rea::Json("name", "test30_")))
+            ->nextF<double>([](rea::stream<double>* aInput){
                 std::lock_guard<std::mutex> gd(mtx);
                 auto cnt = aInput->scope()->data<int>("count");
                 if (cnt == 200){
@@ -491,7 +500,10 @@ void MainWindow::unitTest(){
                     assert(aInput->scope()->data<std::shared_ptr<QSet<QThread*>>>("threads")->size() == 8);
                     aInput->outs<QString>("Pass: test30", "testSuccess");
                 }
-            });
+            }, "", rea::Json("name", "test30__"));
+    });
+
+    rea::m_tests.insert("test30", [](){
         rea::pipeline::instance()->run<double>("test30", 0);
     });
 
@@ -602,7 +614,7 @@ void MainWindow::unitTest(){
             rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
                 assert(aInput->data() == 24.0);
                 aInput->outs<QString>("Pass: test45");
-            }, rea::Json("name", "test45", "thread", 5, "external", "qml"));
+            }, rea::Json("name", "test45", "thread", 6, "external", "qml"));
         });
 
         rea::m_tests.insert("test46", [](){
@@ -615,9 +627,12 @@ void MainWindow::unitTest(){
     rea::test("test4");
     rea::test("test5");
     rea::test("test9");
+    rea::test("test12_");
     rea::test("test17");
     rea::test("test21");
     rea::test("test24");
+    rea::test("test25_");
+    rea::test("test31_");
     rea::test("test34");
     rea::test("test35");
     rea::test("test39");

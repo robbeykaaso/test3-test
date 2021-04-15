@@ -189,6 +189,7 @@ ApplicationWindow {
             }
 
             function test34(){
+                Pipeline.find("test34_").removeNext("test34__")
                 Pipeline.find("test34__").removeNext("test_34")
 
                 Pipeline.add(function(aInput){
@@ -436,6 +437,7 @@ ApplicationWindow {
                     for (var i in dt)
                         if (unit_test[i])
                             unit_test[i]()
+                    gc()
                 }, {name: "unitTestQML", external: "js"})
             }
         }

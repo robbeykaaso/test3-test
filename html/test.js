@@ -20,15 +20,24 @@ function recvMessage(msg)
 
 function onBtnSendMsg()
 {
-    const times = 5000
-    for (let i = 0; i < times; ++i)
+    for (let i = 0; i < 100; ++i)
         pipelines().run("unitTest")
     //var cmd = document.getElementById("待发送消息").value;
 }
 
-function onBtnClearGarbage()
+function onBtnReportCLeak()
 {
+    pipelines().run("reportCLeak", 0)
+}
 
+function onBtnReportQMLLeak()
+{
+    pipelines().run("reportQMLLeak", 0)
+}
+
+function onBtnReportJSLeak()
+{
+    pipelines().run("reportJSLeak", 0)
 }
 
 async function onBtnShowImage()
@@ -516,11 +525,13 @@ rea(e=>{
     pipelines().add(function(aInput){
         test_pass++
         console.log("Success: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
+        aInput.out()
     }, {name: "testSuccessJS"})
 
     pipelines().add(function(aInput){
         test_pass--
         console.log("Fail: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
+        aInput.out()
     }, {name: "testFailJS"})
 
     test1_()
@@ -531,13 +542,16 @@ rea(e=>{
     test17_()
     test19_()
     test25_()
+
     pipelines().add(function(aInput){
+        //js
         let test = [
-/*            [test1, 1], //test js anonymous next
+            [test1, 1], //test js anonymous next
             [test2, 1], //test js specific next
             [test3, 3], //test js pipe future
             [test4, 1], //test pipe mixture: js->js.future(c++)->js.future(c++)->js ; scopeCache
             [test5, 1], //test pipe mixture: js.future(c++)->js
+
             [test8_, 1],
             [test15, 1], //test js pipe partial
             [test17, 1], //test pipe mixture partial: js.future(c++)->js
@@ -548,69 +562,73 @@ rea(e=>{
             [test21, 1],  //test pipe mixture delegate: js->js.future(c++)->c++, js
             [test23, 1], //test js asyncCall
             [test24, 1] //test pipe mixture: js.asyncCall.c++
-*/
         ]
         for (let i in test)
             test_sum += test[i][1]
         for (let i in test)
             test[i][0]()
-
+        //qml
         aInput.outs({
                         [test31()]: 1, //test qml anonymous next
-                    /*    [test32()]: 1, //test qml specific next
+                        [test32()]: 1, //test qml specific next
                         [test33()]: 3,  //test qml pipe future
                         [test34()]: 1,  //test pipe mixture: qml->qml.future(c++)->qml.future(c++)->qml; scopeCache
                         [test35()]: 1, //test pipe mixture: qml.future(c++)->qml,
                         [test38()]: 1, //test qml pipe partial
                         [test39()]: 1, //test pipe mixture partial: qml.future(c++)->qml
                         [test41()]: 1, //test qml pipe delegate and pipe param
-
                         [test42_()]: 1, //test pipe mixture delegate: c++->c++.future(qml)->qml, c++
                         [test43()]: 1,  //test pipe mixture delegate: qml->qml.future(c++)->c++, qml,
                         [test44()]: 1, //test qml asyncCall
+
                         [test45()]: 1, //test pipe mixture: qml.asyncCall.c++
                         [test47()]: 1, //test qml aop and keep topo
-                        */
                     }, "unitTestQML")
         aInput.outs({
-          /*  [test6()]: 1, //test pipe mixture: c++->c++.future(js)->c++.future(js)->c++ ; scopeCache
+            //js
+
+            [test6()]: 1, //test pipe mixture: c++->c++.future(js)->c++.future(js)->c++ ; scopeCache
             [test7()]: 1, //test pipe mixture: c++.future(js)->c++
             [test8()]: 0, //test pipe mixture: c++.future(js)
             [test9_()]: 1, //test pipe mixture: js.future(c++)
+            [test16()]: 1, //test pipe mixture partial: c++.future(js)->c++
+            [test20()]: 1, //test pipe mixture delegate: c++->c++.future(js)->js, c++
+            [test21_()]: 1,  //test pipe mixture delegate: js->js.future(c++)->c++, js
+            [test25()]: 1, //test pipe mixture: c++.asyncCall.js
+            [test29()]: 1,  //test rea-js arbitrary type
+
+            //c++
             [test11()]: 1, //test c++ anonymous next
             [test12()]: 1, //test c++ specific next
             [test13()]: 3, //test c++ pipe future
             [test14()]: 1, //test c++ pipe partial
-            [test16()]: 1, //test pipe mixture partial: c++.future(js)->c++
             [test18()]: 1, //test c++ pipe delegate and pipe param
-
-            [test20()]: 1, //test pipe mixture delegate: c++->c++.future(js)->js, c++
-
-            [test21_()]: 1,  //test pipe mixture delegate: js->js.future(c++)->c++, js
             [test22()]: 1, //test c++ asyncCall
-            [test25()]: 1, //test pipe mixture: c++.asyncCall.js
             [test26()]: 1, //test c++ aop and keep topo
             [test27()]: 1, //test c++ functor
-            [test28()]: 1, //test pipe qml
-            [test29()]: 1,  //test rea-js arbitrary type
             [test30()]: 1, //test c++ pipe parallel
+
+            //qml
+            [test28()]: 1, //test pipe qml
+
             [test36()]: 1, //test pipe mixture: c++->c++.future(qml)->c++.future(qml)->c++ ; scopeCache
             [test37()]: 1, //test pipe mixture: c++.future(qml)->c++
             [test40()]: 1, //test pipe mixture partial: c++.future(qml)->c++
-
             [test42()]: 1, //test pipe mixture delegate: c++->c++.future(qml)->qml, c++
             [test43_()]: 1,  //test pipe mixture delegate: qml->qml.future(c++)->c++, qml
             [test46()]: 1, //test pipe mixture: c++.asyncCall.qml
-                        */
+
                     }, "unitTestC++")
     }, {name: "unitTest"})
     .next("unitTestC++")
     .nextF(function(aInput){
         aInput.setData({
-        /*    [test9()]: 0,
+            //js
+            [test9()]: 0,
             [test21__()]: 0,
+            //qml
             [test43__()]: 0
-                           */
+
         }).out()
     })
     .next("unitTestQML")
