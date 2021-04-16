@@ -13,6 +13,7 @@ ref: https://www.jianshu.com/p/3c3888329732
 #include <QTextStream>
 #include <QWebChannel>
 #include "reaJS.h"
+#include "reaQML.h"
 #include <sstream>
 
 
@@ -104,6 +105,33 @@ public:
 private:
     int m_start;
 };
+
+namespace rea {
+
+template <typename T, typename F>
+class pipeCustomQML : public rea::pipe<T, F> {
+public:
+    pipeCustomQML(rea::pipeline* aParent, const QString& aName, int aThreadNo = 0, bool aReplace = false) : rea::pipe<T, F>(aParent, aName, aThreadNo, aReplace) {
+
+    }
+protected:
+    bool event( QEvent* e) override{
+        if(e->type()== rea::pipe0::streamEvent::type){
+            auto eve = reinterpret_cast<rea::pipe0::streamEvent*>(e);
+            if (eve->getName() == rea::pipe0::m_name){
+                auto stm = std::dynamic_pointer_cast<rea::stream<T>>(eve->getStream());
+                stm->scope()->template cache<QString>("flag", "test48");
+                doEvent(stm);
+                doNextEvent(rea::pipe0::m_next, stm);
+            }
+        }
+        return true;
+    }
+};
+
+regQMLPipe(CustomQML);
+
+}
 
 void MainWindow::unitTest(){
     //unitTestC++;testSuccess;testFail
@@ -366,7 +394,7 @@ void MainWindow::unitTest(){
     //test22;test24;test25;test26
     {
     rea::m_tests.insert("test22", [](){
-        rea::pipeline::instance()->input<int>(0, "test22")
+        rea::in<int>(0, "test22")
             ->asyncCallF<int>([](rea::stream<int>* aInput){
                 aInput->setData(aInput->data() + 1)->out();
             }, rea::Json("thread", 2))
@@ -388,10 +416,9 @@ void MainWindow::unitTest(){
         }, rea::Json("name", "test24", "thread", 5, "external", "js"));
     });
 
-    static int tick = 0;
     rea::m_tests.insert("test25_", [](){
         rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
-            rea::pipeline::instance()->input<double>(25, "test25")
+            rea::in<double>(25, "test25")
                 ->asyncCall<QString>("test25")
                 ->asyncCall("testSuccess");
         }, rea::Json("name", "test25_", "thread", 4));
@@ -442,7 +469,7 @@ void MainWindow::unitTest(){
     rea::m_tests.insert("test27", [](){
         auto tmp = foo(6);
         //rea::pipeline::instance()->add<int>(foo(2));
-        rea::pipeline::instance()->input<int>(3)
+        rea::in<int>(3)
             ->asyncCallF<int>(foo(2))
             ->asyncCallF<int>(std::bind1st(std::mem_fun(&foo::memberFoo), &tmp))
             ->asyncCallF<QString>([](rea::stream<int>* aInput){
@@ -618,7 +645,7 @@ void MainWindow::unitTest(){
         });
 
         rea::m_tests.insert("test46", [](){
-            rea::pipeline::instance()->input<double>(25, "test46")
+            rea::in<double>(25, "test46")
                 ->asyncCall<QString>("test46")
                 ->asyncCall("testSuccess");
         });

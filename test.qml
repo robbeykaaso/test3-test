@@ -388,6 +388,17 @@ ApplicationWindow {
                 Pipeline.run("test47", 1)
             }
 
+            function test48_(){
+                Pipeline.add(function(aInput){
+                    console.assert(aInput.scope().data("flag") == "test48")
+                    aInput.outs("Pass: test48", "testSuccessQML")
+                }, {name: "test48", type: "CustomQML"})
+            }
+
+            function test48(){
+                Pipeline.run("test48", 0)
+            }
+
             Component.onCompleted: {
                 Pipeline.add(function(aInput){
                     test_pass++
@@ -416,7 +427,8 @@ ApplicationWindow {
                     test43__: test43__,
                     test44: test44,
                     test45: test45,
-                    test47: test47
+                    test47: test47,
+                    test48: test48
                 }
                 test28()
                 test31_()
@@ -429,6 +441,7 @@ ApplicationWindow {
                 test40()
                 test41_()
                 test46()
+                test48_()
 
                 Pipeline.add(function(aInput){
                     var dt = aInput.data()

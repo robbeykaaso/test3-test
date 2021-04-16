@@ -20,7 +20,7 @@ function recvMessage(msg)
 
 function onBtnSendMsg()
 {
-    for (let i = 0; i < 100; ++i)
+   // for (let i = 0; i < 100; ++i)
         pipelines().run("unitTest")
     //var cmd = document.getElementById("待发送消息").value;
 }
@@ -516,6 +516,37 @@ function test47(){
     return "test47"
 }
 
+function test48(){
+    return "test48"
+}
+
+class pipeCustomJS extends pipe{
+
+    execute(aStream){
+        aStream.scope().cache("flag", "test49")
+        this.doEvent(aStream)
+        this.doNextEvent(this.m_next, aStream)
+    }
+}
+
+rea(e=>{
+    pipelines().add(function(aInput){
+        const sp = aInput.scope()
+        aInput.setData(new pipeCustomJS(sp.data("parent"), sp.data("name")))
+    }, {name: "createJSPipeCustomJS"})
+})
+
+function test49_(){
+    pipelines().add(function(aInput){
+        console.assert(aInput.scope().data("flag") == "test49")
+        aInput.outs("Pass: test49", "testSuccessJS")
+    }, {name: "test49", type: "CustomJS"})
+}
+
+function test49(){
+    pipelines().run("test49", 0)
+}
+
 //#endregion
 
 rea(e=>{
@@ -542,6 +573,7 @@ rea(e=>{
     test17_()
     test19_()
     test25_()
+    test49_()
 
     pipelines().add(function(aInput){
         //js
@@ -561,7 +593,8 @@ rea(e=>{
 
             [test21, 1],  //test pipe mixture delegate: js->js.future(c++)->c++, js
             [test23, 1], //test js asyncCall
-            [test24, 1] //test pipe mixture: js.asyncCall.c++
+            [test24, 1], //test pipe mixture: js.asyncCall.c++
+            [test49, 1]  //test custom js pipe
         ]
         for (let i in test)
             test_sum += test[i][1]
@@ -573,6 +606,7 @@ rea(e=>{
                         [test32()]: 1, //test qml specific next
                         [test33()]: 3,  //test qml pipe future
                         [test34()]: 1,  //test pipe mixture: qml->qml.future(c++)->qml.future(c++)->qml; scopeCache
+
                         [test35()]: 1, //test pipe mixture: qml.future(c++)->qml,
                         [test38()]: 1, //test qml pipe partial
                         [test39()]: 1, //test pipe mixture partial: qml.future(c++)->qml
@@ -583,6 +617,8 @@ rea(e=>{
 
                         [test45()]: 1, //test pipe mixture: qml.asyncCall.c++
                         [test47()]: 1, //test qml aop and keep topo
+                        [test48()]: 1, //test custom qml pipe
+
                     }, "unitTestQML")
         aInput.outs({
             //js
