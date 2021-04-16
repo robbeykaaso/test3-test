@@ -529,12 +529,10 @@ class pipeCustomJS extends pipe{
     }
 }
 
-rea(e=>{
-    pipelines().add(function(aInput){
-        const sp = aInput.scope()
-        aInput.setData(new pipeCustomJS(sp.data("parent"), sp.data("name")))
-    }, {name: "createJSPipeCustomJS"})
-})
+pipelines().add(function(aInput){
+    const sp = aInput.scope()
+    aInput.setData(new pipeCustomJS(sp.data("parent"), sp.data("name")))
+}, {name: "createJSPipeCustomJS"})
 
 function test49_(){
     pipelines().add(function(aInput){
@@ -549,31 +547,31 @@ function test49(){
 
 //#endregion
 
-rea(e=>{
-    let test_sum = 0
-    let test_pass = 0
+let test_sum = 0
+let test_pass = 0
 
-    pipelines().add(function(aInput){
-        test_pass++
-        console.log("Success: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
-        aInput.out()
-    }, {name: "testSuccessJS"})
+pipelines().add(function(aInput){
+    test_pass++
+    console.log("Success: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
+    aInput.out()
+}, {name: "testSuccessJS"})
 
-    pipelines().add(function(aInput){
-        test_pass--
-        console.log("Fail: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
-        aInput.out()
-    }, {name: "testFailJS"})
+pipelines().add(function(aInput){
+    test_pass--
+    console.log("Fail: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
+    aInput.out()
+}, {name: "testFailJS"})
 
-    test1_()
-    test2_()
-    test3_()
-    test15_()
-    test16_()
-    test17_()
-    test19_()
-    test25_()
-    test49_()
+test1_()
+test2_()
+test3_()
+test15_()
+test16_()
+test17_()
+test19_()
+test25_()
+test49_()
+
 
     pipelines().add(function(aInput){
         //js
@@ -618,7 +616,6 @@ rea(e=>{
                         [test45()]: 1, //test pipe mixture: qml.asyncCall.c++
                         [test47()]: 1, //test qml aop and keep topo
                         [test48()]: 1, //test custom qml pipe
-
                     }, "unitTestQML")
         aInput.outs({
             //js
@@ -653,7 +650,6 @@ rea(e=>{
             [test42()]: 1, //test pipe mixture delegate: c++->c++.future(qml)->qml, c++
             [test43_()]: 1,  //test pipe mixture delegate: qml->qml.future(c++)->c++, qml
             [test46()]: 1, //test pipe mixture: c++.asyncCall.qml
-
                     }, "unitTestC++")
     }, {name: "unitTest"})
     .next("unitTestC++")
@@ -664,10 +660,8 @@ rea(e=>{
             [test21__()]: 0,
             //qml
             [test43__()]: 0
-
         }).out()
     })
     .next("unitTestQML")
-})
 
 //#endregion
