@@ -90,7 +90,8 @@
 </template>
 
 <script>
-var rea = require('reajs')
+// var rea = require('reajs')
+import rea from 'reajs'
 
 rea.pipelines().add(function (aInput) {
   aInput.setData('hello world').out()
@@ -99,7 +100,7 @@ rea.pipelines().add(function (aInput) {
 window.onBtnSendMsg = async function () {
   let ret = await rea.pipelines().input().asyncCallS('testVue')
   window.alert(ret.data())
-  //console.log(ret.data())
+  // console.log(ret.data())
 }
 export default {
   name: 'HelloWorld',

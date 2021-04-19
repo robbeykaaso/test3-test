@@ -81,5 +81,11 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/test_vue/dist"
-    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
+    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../test_vue"
+    COMMENT "copying resource.")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/mnist-core/dist"
+    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../mnist-core"
     COMMENT "copying resource.")

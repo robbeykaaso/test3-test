@@ -1520,15 +1520,15 @@ ApplicationWindow {
             id: webview
             //url: "file:/html/test.html"
             //url: "https://www.baidu.com"
-            url: "file:/html/index.html"
+            url: "file:/mnist-core/index.html"
             z: - 1
-            Row{
+            Column{
                 anchors.fill: parent
-                spacing: width * 0.2
+                spacing: height * 0.2
                 z: 1
                 Rectangle{
-                    width: parent.width * 0.2
-                    height: parent.height
+                    width: parent.width
+                    height: parent.height * 0.1
                     color: "red"
                     z: 1
                 }

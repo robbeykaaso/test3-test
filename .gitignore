@@ -1,3 +1,6 @@
 webpack/node_modules
 test_vue/node_modules
 test_vue/dist
+mnist-core/node_modules
+mnist-core/dist
+mnist-core/.cache
