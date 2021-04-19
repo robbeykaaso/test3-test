@@ -77,3 +77,9 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     "${CMAKE_SOURCE_DIR}/html"
     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
     COMMENT "copying resource.")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/test_vue/dist"
+    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
+    COMMENT "copying resource.")

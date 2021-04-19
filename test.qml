@@ -1520,6 +1520,7 @@ ApplicationWindow {
             id: webview
             //url: "file:/html/test.html"
             //url: "https://www.baidu.com"
+            url: "file:/html/index.html"
             z: - 1
             Row{
                 anchors.fill: parent
@@ -1531,11 +1532,11 @@ ApplicationWindow {
                     color: "red"
                     z: 1
                 }
-                Rectangle{
+               /* Rectangle{
                     width: parent.width * 0.2
                     height: parent.height
                     color: "blue"
-                }
+                }*/
             }
             webChannel: WebChannel{
                 id: webview_chn
