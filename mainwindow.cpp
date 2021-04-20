@@ -34,17 +34,6 @@ void test(const QString& aName){
 
 }
 
-template <>
-class rea::typeTrait<JsContext*> : public typeTrait0{
-public:
-    QString name() override{
-        return "jsContext";
-    }
-    QVariant QData(stream0* aStream) override{
-        return QVariant::fromValue<QObject*>(reinterpret_cast<stream<JsContext*>*>(aStream)->data());
-    }
-};
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -78,7 +67,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     m_webView->page()->setWebChannel(m_webChannel);
     m_webView->setUrl(QApplication::applicationDirPath() + "/html/test.html");
 
-    rea::pipeline::instance()->supportType<JsContext*>();
+    rea::pipeline::instance()->supportType<JsContext*>([](rea::stream0* aInput){
+        return QVariant::fromValue<QObject*>(reinterpret_cast<rea::stream<JsContext*>*>(aInput)->data());
+    });
     m_jsContext = new JsContext();
     connect(m_jsContext, &JsContext::recvdMsg, this, [this](const QString& msg) {
         rea::pipeline::instance()->run<QString>("testSuccess", "Pass: test29");
