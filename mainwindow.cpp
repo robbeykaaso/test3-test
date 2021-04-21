@@ -693,7 +693,7 @@ static rea::regPip<double> reg_web([](rea::stream<double>* aInput){
         wd = new MainWindow();
     wd->show();
     aInput->out();
-}, rea::Json("name", "openWebWindow"));
+}, rea::Json("name", "openWebWindow", "external", "qml"));
 
 static rea::regPip<double> ureg_web([](rea::stream<double>* aInput){
     if (wd){  //memory leak in debug mode; ref: https://forum.qt.io/topic/93582/qwebengine-process-termination-issue/13

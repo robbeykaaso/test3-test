@@ -1,4 +1,6 @@
 //#region control
+let test_sum = 0
+let test_pass = 0
 
 // 向qt发送消息
 function sendMessage(msg)
@@ -39,6 +41,19 @@ function onBtnReportJSLeak()
 {
     pipelines().run("reportJSLeak", 0)
 }
+
+var vis = false
+function onBtnModifyQSGBoard(){
+    vis = !vis
+    pipelines().run("js_updateQSGAttr_testbrd", [{key: ["arrow", "visible"], val: vis}], "wholeArrowVisible")
+}
+
+pipelines().find("js_QSGAttrUpdated_testbrd")
+.nextF(function(aInput){
+    test_sum++
+    aInput.setData("Pass: js_updateQSGAttr").out()
+})
+.next("testSuccessJS")
 
 async function onBtnShowImage()
 {
@@ -169,13 +184,13 @@ function test6(){
         console.assert(aInput.data() == 4)
         console.assert(aInput.scope().data("hello") == "world")
         aInput.setData(aInput.data() + 1).out()
-    }, {name: "test6_", external: ""})
+    }, {name: "test6_", external: "c++"})
 
     pipelines().add(function(aInput){
         console.assert(aInput.data() == 5)
         aInput.scope(true).cache("hello2", "world");
         aInput.setData(aInput.data() + 1).out()
-    }, {name: "test6__", external: ""})
+    }, {name: "test6__", external: "c++"})
 
     return "test6"
 }
@@ -184,7 +199,7 @@ function test7(){
     pipelines().add(function(aInput){
         console.assert(aInput.data() == "hello")
         aInput.setData("world").out()
-    }, {name: "test7", external: ""})
+    }, {name: "test7", external: "c++"})
 
     return "test7"
 }
@@ -193,7 +208,7 @@ function test8(){
     pipelines().add(function(aInput){
         console.assert(aInput.data() == "hello")
         aInput.outs("Pass: test8", "testSuccessJS")
-    }, {name: "test8", external: ""})
+    }, {name: "test8", external: "c++"})
 
     return "test8"
 }
@@ -258,7 +273,7 @@ function test16_(){
     pipelines().add(function(aInput){
         console.assert(aInput.data() == 66)
         aInput.setData(77).out()
-    }, {name: "test16", external: "", type: "Partial"})
+    }, {name: "test16", external: "c++", type: "Partial"})
 }
 
 function test16(){
@@ -314,7 +329,7 @@ function test20(){
     pipelines().add(function(aInput){
         console.assert(aInput.data() == 56.0)
         aInput.setData("Pass: test20").out()
-    }, {name: "test20", external: ""})
+    }, {name: "test20", external: "c++"})
 
     return "test20"
 }
@@ -384,7 +399,7 @@ function test25_(){
     pipelines().add(function(aInput){
         console.assert(aInput.data() == 25.0)
         aInput.setData("Pass: test25").out()
-    }, {name: "test25", external: ""})
+    }, {name: "test25", external: "c++"})
 }
 
 function test25(){
@@ -412,7 +427,7 @@ function test29(){
         context = aInput.data()
         console.assert(aInput.scope().data("ctx") == context)
         sendMessage("lala")
-    }, {name: "test29", external: ""})
+    }, {name: "test29", external: "c++"})
 
     return "test29"
 }
@@ -547,9 +562,6 @@ function test49(){
 
 //#endregion
 
-let test_sum = 0
-let test_pass = 0
-
 pipelines().add(function(aInput){
     test_pass++
     console.log("Success: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
@@ -619,7 +631,6 @@ test49_()
                     }, "unitTestQML")
         aInput.outs({
             //js
-
             [test6()]: 1, //test pipe mixture: c++->c++.future(js)->c++.future(js)->c++ ; scopeCache
             [test7()]: 1, //test pipe mixture: c++.future(js)->c++
             [test8()]: 0, //test pipe mixture: c++.future(js)
@@ -643,13 +654,13 @@ test49_()
 
             //qml
             [test28()]: 1, //test pipe qml
-
             [test36()]: 1, //test pipe mixture: c++->c++.future(qml)->c++.future(qml)->c++ ; scopeCache
             [test37()]: 1, //test pipe mixture: c++.future(qml)->c++
             [test40()]: 1, //test pipe mixture partial: c++.future(qml)->c++
             [test42()]: 1, //test pipe mixture delegate: c++->c++.future(qml)->qml, c++
             [test43_()]: 1,  //test pipe mixture delegate: qml->qml.future(c++)->c++, qml
             [test46()]: 1, //test pipe mixture: c++.asyncCall.qml
+
                     }, "unitTestC++")
     }, {name: "unitTest"})
     .next("unitTestC++")

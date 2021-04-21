@@ -37,6 +37,7 @@ add_library(REA_TEST SHARED
     "inspector.cpp"
     "inspector.ui"
     "test_qml.cpp"
+    "test_qsg.cpp"
     )
 # 创建动态库别名
 

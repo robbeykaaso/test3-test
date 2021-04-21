@@ -10,7 +10,7 @@ import "qml/gui/Basic"
 import "qml/gui/Pipe"
 import "qml/gui/Pipe/TreeNodeView"
 import Pipeline 1.0
-//import QSGBoard 1.0
+import QSGBoard 1.0
 
 ApplicationWindow {
     width: 800
@@ -26,104 +26,16 @@ ApplicationWindow {
         id: mainmenu
         Menu{
             title: "rea"
-            MenuItem{
-                text: "TestRea"
-                onClicked: Pipeline.run("doUnitTest", 0, "", false)
-            }
-            MenuItem{
-                text: "TestQMLStorage"
-                onClicked: Pipeline.run("writeJson2", "testFS2.json", "testQMLStg", true, {"testFS2.json": {hello: "world"}})
-                Component.onCompleted: {
-                    Pipeline.find("writeJson2")
-                    .next(function(aInput){
-                        var dt = aInput.varData("testFS2.json", "object")
-                        console.assert(dt["hello"] === "world")
-                        aInput.var("testFS2.json", {hello: "world2"}).outs(aInput.data(), "readJson2")
-                        dt = aInput.varData("testFS2.json", "object")
-                        console.assert(dt["hello"] === "world2")
-                    }, "testQMLStg", {vtype: "string"})
-                    .next("readJson2")
-                    .next(function(aInput){
-                        var dt = aInput.varData("testFS2.json", "object")
-                        console.assert(dt["hello"] === "world")
-                        aInput.outsB("testFS2.json", "deletePath").outs("Pass: testQMLStorage ", "testSuccess");
-                    }, "testQMLStg", {vtype: "string"})
-                }
-            }
-            MenuItem{
-                text: "TestQMLStorage2"
-                onClicked: Pipeline.run("writeJson2", "testFS2.json", "testQMLStg2", true, {"testFS2.json": {hello: "world"}})
 
-                Component.onCompleted: {
-                    Pipeline.find("writeJson2")
-                    .next(function(aInput){
-                        var tmp = function(){
-                            var dt = aInput.varData("testFS2.json", "object")
-                            console.assert(dt["hello"] === "world")
-                            aInput.var("testFS2.json", {hello: "world2"})
-                            dt = aInput.map("testFS2.json").call("readJson2").varData("testFS2.json", "object")
-                            console.assert(dt["hello"] === "world")
-                            aInput.outsB("testFS2.json", "deletePath").outs("Pass: testQMLStorage2 ", "testSuccess");
-                        }
-                        tmp()
-                        gc()  //https://stackoverflow.com/questions/27315030/how-to-manage-lifetime-of-dynamically-allocated-qobject-returned-to-qml
-                    }, "testQMLStg2", {vtype: "string"})
-                }
-            }
             MenuItem{
-                text: "TestQMLStorage3"
-                onClicked: {
-                    Pipeline.input("testFS2.json", "testQMLStg3", true, {"testFS2.json": {hello: "world"}})
-                    .call("writeJson2")
-                    .call(function(aInput){
-                        var dt = aInput.varData("testFS2.json", "object")
-                        console.assert(dt["hello"] === "world")
-                        aInput.var("testFS2.json", {hello: "world2"}).out()
-                    })
-                    .call("readJson2")
-                    .call("deletePath")
-                    .call(function(aInput){
-                        var dt = aInput.varData("testFS2.json", "object")
-                        console.assert(dt["hello"] === "world")
-                        aInput.setData("Pass: testQMLStorage3 ").out()
-                    })
-                    .call("testSuccess")
-                    .destroy()
-                }
+                text: "test"
+                onClicked: Pipeline.run("openWebWindow", 0)
             }
-            MenuItem{
-                text: "TestQMLStreamProgram"
-                onClicked: {
-                    Pipeline.input(0, "TestQMLStreamProgram")
-                    .call(function(aInput){
-                        aInput.setData(aInput.data() + 1).out()
-                    })
-                    .call(function(aInput){
-                        console.assert(aInput.data() === 1)
-                        aInput.outs("world")
-                    }, {vtype: "string"})
-                    .call(function(aInput){
-                        console.assert(aInput.data() === "world")
-                        aInput.setData("Pass: test12_").out()
-                    })
-                    .call("testSuccess")
-                    .destroy()
-                }
-            }
-            MenuItem{
-                text: "logTransaction"
-                onClicked: Pipeline.run("logTransaction", 0, "", false)
-            }
-            MenuItem{
-                text: "saveTransaction"
-                onClicked: Pipeline.run("logTransaction", 1, "", false)
-            }
-
             function test28(){
                 Pipeline.add(function(aInput){
                     console.assert(aInput.data()["test28"] === "test28")
                     aInput.outs(aInput.data(), "test28_0")
-                }, {name: "test28_", external: ""})
+                }, {name: "test28_", external: "c++"})
             }
 
             function test31_(){
@@ -225,20 +137,20 @@ ApplicationWindow {
                     console.assert(aInput.data() == 4)
                     console.assert(aInput.scope().data("hello") == "world")
                     aInput.setData(aInput.data() + 1).out()
-                }, {name: "test36_", external: ""})
+                }, {name: "test36_", external: "c++"})
 
                 Pipeline.add(function(aInput){
                     console.assert(aInput.data() == 5)
                     aInput.scope(true).cache("hello2", "world");
                     aInput.setData(aInput.data() + 1).out()
-                }, {name: "test36__", external: ""})
+                }, {name: "test36__", external: "c++"})
             }
 
             function test37(){
                 Pipeline.add(function(aInput){
                     console.assert(aInput.data() == "hello")
                     aInput.setData("world").out()
-                }, {name: "test37", external: ""})
+                }, {name: "test37", external: "c++"})
             }
 
             function test38_(){
@@ -281,7 +193,7 @@ ApplicationWindow {
                 Pipeline.add(function(aInput){
                     console.assert(aInput.data() == 66)
                     aInput.setData(77).out()
-                }, {name: "test40", external: "", type: "Partial"})
+                }, {name: "test40", external: "c++", type: "Partial"})
             }
 
             function test41_(){
@@ -308,7 +220,7 @@ ApplicationWindow {
                 Pipeline.add(function(aInput){
                     console.assert(aInput.data() == 56.0)
                     aInput.setData("Pass: test42").out()
-                }, {name: "test42", external: ""})
+                }, {name: "test42", external: "c++"})
             }
 
             function test43(){
@@ -351,7 +263,7 @@ ApplicationWindow {
                 Pipeline.add(function(aInput){
                     console.assert(aInput.data() == 25.0)
                     aInput.setData("Pass: test46").out()
-                }, {name: "test46", external: ""})
+                }, {name: "test46", external: "c++"})
             }
 
             function test47(){
@@ -522,20 +434,20 @@ ApplicationWindow {
 
             Menu{
                 title: "updateModel"
-                MenuItem {
-                    text: "show"
-                    onClicked: {
-                        Pipeline.run("testQSGShow", view_cfg)
+                Action {
+                    text: "model"
+                    shortcut: "Ctrl+S"
+                    onTriggered: {
+                        Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
-
                 Action {
                     text: "face"
                     checkable: true
                     shortcut: "Ctrl+F"
                     onTriggered: {
                         view_cfg["face"] = 100 - view_cfg["face"]
-                        Pipeline.run("testQSGShow", view_cfg)
+                        Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -544,7 +456,7 @@ ApplicationWindow {
                     shortcut: "Ctrl+A"
                     onTriggered: {
                         view_cfg["arrow"]["visible"] = !view_cfg["arrow"]["visible"]
-                        Pipeline.run("testQSGShow", view_cfg)
+                        Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -553,16 +465,16 @@ ApplicationWindow {
                     shortcut: "Ctrl+T"
                     onTriggered: {
                         view_cfg["text"]["visible"] = !view_cfg["text"]["visible"]
-                        Pipeline.run("testQSGShow", view_cfg)
+                        Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
-                Action {
+                /*Action {
                     text: "fps"
                     checkable: true
                     onTriggered: {
                         Pipeline.run("testFPS", {})
                     }
-                }
+                }*/
             }
 
             Menu{
@@ -573,7 +485,7 @@ ApplicationWindow {
                     text: "wholeArrowVisible"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {key: ["arrow", "visible"], val: checked}, "wholeArrowVisible")
+                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["arrow", "visible"], val: checked}], "wholeArrowVisible")
                     }
                 }
                 MenuItem{
@@ -581,7 +493,7 @@ ApplicationWindow {
                     text: "wholeArrowPole"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {key: ["arrow", "pole"], val: checked}, "wholeArrowPole")
+                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["arrow", "pole"], val: checked}], "wholeArrowPole")
                     }
                 }
                 MenuItem{
@@ -589,7 +501,7 @@ ApplicationWindow {
                     text: "wholeFaceOpacity"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {key: ["face"], val: checked ? 200 : 0}, "wholeFaceOpacity")
+                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["face"], val: checked ? 200 : 0}], "wholeFaceOpacity")
                     }
                 }
                 MenuItem{
@@ -597,7 +509,7 @@ ApplicationWindow {
                     text: "wholeTextVisible"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {key: ["text", "visible"], val: checked}, "wholeTextVisible")
+                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["text", "visible"], val: checked}], "wholeTextVisible")
                     }
                 }
                 MenuItem{
@@ -605,7 +517,7 @@ ApplicationWindow {
                     text: "wholeColor"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttrs_testbrd", [{key: ["color"], val: checked ? "yellow" : "green"}], "wholeColor")
+                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["color"], val: checked ? "yellow" : "green"}], "wholeColor")
                     }
                 }
 
@@ -614,7 +526,7 @@ ApplicationWindow {
                     text: "wholeObjects"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttrs_testbrd", [{key: ["objects"], type: checked ? "add" : "del", tar: "shp_3", val: {
+                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["objects"], type: checked ? "add" : "del", tar: "shp_3", val: {
                                                                                                          type: "poly",
                                                                                                          points: [[500, 300, 700, 300, 700, 500, 500, 300]],
                                                                                                          color: "pink",
@@ -624,6 +536,14 @@ ApplicationWindow {
                     }
                 }
 
+                Component.onCompleted: {
+                    Pipeline.find("qml_QSGAttrUpdated_testbrd")
+                    .nextF(function(aInput){
+                        test_sum++
+                        aInput.setData("Pass: qml_updateQSGAttr").out()
+                    })
+                    .next("testSuccessQML")
+                }
             }
             Menu{
                 title: "updateLocalAttr"
@@ -633,7 +553,7 @@ ApplicationWindow {
                     text: "polyArrowVisible"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["arrow", "visible"], val: checked}, "polyArrowVisible")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["arrow", "visible"], val: checked}], "polyArrowVisible")
                     }
                 }
                 MenuItem{
@@ -641,7 +561,7 @@ ApplicationWindow {
                     text: "polyArrowPole"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["arrow", "pole"], val: checked}, "polyArrowPole")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["arrow", "pole"], val: checked}], "polyArrowPole")
                     }
                 }
                 MenuItem{
@@ -649,7 +569,7 @@ ApplicationWindow {
                     text: "polyFaceOpacity"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["face"], val: checked ? 200 : 0}, "polyFaceOpacity")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["face"], val: checked ? 200 : 0}], "polyFaceOpacity")
                     }
                 }
                 MenuItem{
@@ -657,7 +577,7 @@ ApplicationWindow {
                     text: "polyTextVisible"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["text", "visible"], val: checked}, "polyTextVisible")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["text", "visible"], val: checked}], "polyTextVisible")
                     }
                 }
                 MenuItem{
@@ -665,7 +585,7 @@ ApplicationWindow {
                     text: "polyColor"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["color"], val: checked ? "yellow" : "green"}, "polyColor")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["color"], val: checked ? "yellow" : "green"}], "polyColor")
                     }
                 }
                 MenuItem{
@@ -673,7 +593,7 @@ ApplicationWindow {
                     text: "polyCaption"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["caption"], val: checked ? "poly_new" : "poly"}, "polyCaption")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["caption"], val: checked ? "poly_new" : "poly"}], "polyCaption")
                     }
                 }
                 MenuItem{
@@ -681,7 +601,7 @@ ApplicationWindow {
                     text: "polyWidth"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["width"], val: checked ? 0 : 10}, "polyWidth")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["width"], val: checked ? 0 : 10}], "polyWidth")
                     }
                 }
                 MenuItem{
@@ -689,7 +609,7 @@ ApplicationWindow {
                     text: "polyPoints"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["points"], val: checked ? [[50, 50, 200, 50, 200, 200, 50, 200, 50, 50], [80, 70, 120, 100, 120, 70, 80, 70]] : [[50, 50, 200, 200, 200, 50, 50, 50]]}, "polyPoints")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["points"], val: checked ? [[50, 50, 200, 50, 200, 200, 50, 200, 50, 50], [80, 70, 120, 100, 120, 70, 80, 70]] : [[50, 50, 200, 200, 200, 50, 50, 50]]}], "polyPoints")
                     }
                 }
                 MenuItem{
@@ -697,7 +617,7 @@ ApplicationWindow {
                     text: "polyStyle"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_0", key: ["style"], val: checked ? "dash" : "solid"}, "polyStyle")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["style"], val: checked ? "dash" : "solid"}], "polyStyle")
                     }
                 }
                 MenuItem{
@@ -705,7 +625,7 @@ ApplicationWindow {
                     text: "ellipseAngle"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_1", key: ["angle"], val: checked ? 90 : 20}, "ellipseAngle")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["angle"], val: checked ? 90 : 20}], "ellipseAngle")
                     }
                 }
                 MenuItem{
@@ -713,7 +633,7 @@ ApplicationWindow {
                     text: "ellipseCenter"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_1", key: ["center"], val: checked ? [600, 400] : [400, 400]}, "ellipseCenter")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["center"], val: checked ? [600, 400] : [400, 400]}], "ellipseCenter")
                     }
                 }
                 MenuItem{
@@ -721,7 +641,7 @@ ApplicationWindow {
                     text: "ellipseRadius"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_1", key: ["radius"], val: checked ? [200, 400] : [300, 200]}, "ellipseRadius")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["radius"], val: checked ? [200, 400] : [300, 200]}], "ellipseRadius")
                     }
                 }
                 MenuItem{
@@ -729,7 +649,7 @@ ApplicationWindow {
                     text: "ellipseCCW"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "shp_1", key: ["ccw"], val: checked}, "ellipseCCW")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["ccw"], val: checked}], "ellipseCCW")
                     }
                 }
                 MenuItem{
@@ -737,7 +657,7 @@ ApplicationWindow {
                     text: "imagePath"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "img_2", key: ["path"], val: checked ? "F:/3M/B4DT/DF Mark/V1-1.bmp" : "F:/3M/B4DT/DF Mark/V1-2.bmp"}, "imagePath")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["path"], val: checked ? "F:/3M/B4DT/DF Mark/V1-1.bmp" : "F:/3M/B4DT/DF Mark/V1-2.bmp"}], "imagePath")
                     }
                 }
                 MenuItem{
@@ -745,16 +665,9 @@ ApplicationWindow {
                     text: "imageRange"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", {obj: "img_2", key: ["range"], val: checked ? [0, 0, 600, 800] : [0, 0, 400, 300]}, "imageRange")
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["range"], val: checked ? [0, 0, 600, 800] : [0, 0, 400, 300]}], "imageRange")
                     }
                 }
-            }
-
-            Component.onCompleted: {
-                Pipeline.find("QSGAttrUpdated_testbrd")
-                .next(function(aInput){
-                    console.log("qsgattr updated!")
-                }, "", {vtype: "array"})
             }
         }
 
@@ -1124,7 +1037,7 @@ ApplicationWindow {
                     property int del_size
                     width: parent.width * 0.7 + del_size
                     height: parent.height
-                    /*QSGBoard{
+                    QSGBoard{
                         id: testbrd
                         name: "testbrd"
                         plugins: [{type: "transform"}]
@@ -1133,7 +1046,7 @@ ApplicationWindow {
                         Component.onDestruction: {
                             beforeDestroy()
                         }
-                    }*/
+                    }
                     Rectangle{
                         width: parent.width
                         height: parent.height * 0.7
