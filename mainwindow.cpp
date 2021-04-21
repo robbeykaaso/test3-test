@@ -14,6 +14,7 @@ ref: https://www.jianshu.com/p/3c3888329732
 #include <QWebChannel>
 #include "reaJS.h"
 #include "reaQML.h"
+#include "util.h"
 #include <sstream>
 
 
@@ -658,13 +659,8 @@ void MainWindow::unitTest(){
     rea::test("test45");
 
     rea::pipeline::instance()->add<QString>([](rea::stream<QString>* aInput){
-        QImage img("F:/3M/微信图片_20200916112142.png");
-        QBuffer bf;
-        bf.open(QIODevice::WriteOnly);
-        img.save(&bf, "png");
-        QString dt = "data:image/png;base64, " + bf.data().toBase64();
+        QString dt = "data:image/png;base64, " + rea::QImage2Base64(QImage("F:/3M/微信图片_20200916112142.png"));
         aInput->setData(dt)->out();
-        bf.close();
     }, rea::Json("name", "unitTestImage", "external", "js"));
 }
 

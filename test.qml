@@ -468,13 +468,13 @@ ApplicationWindow {
                         Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
-                /*Action {
+                Action {
                     text: "fps"
                     checkable: true
                     onTriggered: {
                         Pipeline.run("testFPS", {})
                     }
-                }*/
+                }
             }
 
             Menu{

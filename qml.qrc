@@ -5,6 +5,5 @@
         <file>test2.qml</file>
         <file>html/test.js</file>
         <file>html/test.html</file>
-        <file>html/bundle.js</file>
     </qresource>
 </RCC>
