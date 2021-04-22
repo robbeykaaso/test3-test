@@ -697,12 +697,3 @@ static rea::regPip<double> ureg_web([](rea::stream<double>* aInput){
         wd = nullptr;
     }
 }, rea::Json("name", "unloadMain"));
-
-/*static rea::regPip<QQmlApplicationEngine*> reg_web([](rea::stream<QQmlApplicationEngine*>* aInput){
-    static auto m_webView = new QWebEngineView();
-    QStackedLayout* layout = new QStackedLayout(ui->frame);
-    ui->frame->setLayout(layout);
-    layout->addWidget(m_webView);
-
-    aInput->out();
-}, QJsonObject(), "regQML");*/

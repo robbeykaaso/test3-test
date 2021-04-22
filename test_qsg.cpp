@@ -24,6 +24,7 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
                              "text", rea::Json("visible", false,
                                                "size", rea::JArray(100, 50),
                                                "location", "bottom"),
+                             "transform", rea::JArray(1, 0, 0, 0, 1, 0, 0, 0, 1),
                              "color", "blue",
                              "max_ratio", 100,
                              "min_ratio", 0.01,
@@ -85,25 +86,11 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
     }, rea::Json("name", "testQSGModel", "external", "qml"));
 
     //interface adapter
-    rea::pipeline::instance()->add<QJsonArray>([](rea::stream<QJsonArray>* aInput){
-        aInput->out();
-    }, rea::Json("name", "qml_updateQSGAttr_testbrd"))
-    ->next("updateQSGAttr_testbrd");
-
-    rea::pipeline::instance()->find("QSGAttrUpdated_testbrd")
-    ->nextF<QJsonArray>([](rea::stream<QJsonArray>* aInput){
-        aInput->out();
-    }, "", rea::Json("name", "qml_QSGAttrUpdated_testbrd", "external", "qml"));
-
-    rea::pipeline::instance()->add<QJsonArray>([](rea::stream<QJsonArray>* aInput){
-        aInput->out();
-    }, rea::Json("name", "js_updateQSGAttr_testbrd"))
-    ->next("updateQSGAttr_testbrd");
-
-    rea::pipeline::instance()->find("QSGAttrUpdated_testbrd")
-    ->nextF<QJsonArray>([](rea::stream<QJsonArray>* aInput){
-        aInput->out();
-    }, "", rea::Json("name", "js_QSGAttrUpdated_testbrd", "external", "js"));
+    extendSubject(QJsonArray, updateQSGAttr_testbrd, qml);
+    extendListener(QJsonArray, QSGAttrUpdated_testbrd, qml);
+    extendSubject(QJsonArray, updateQSGAttr_testbrd, js);
+    extendListener(QJsonArray, QSGAttrUpdated_testbrd, js);
+    extendSubject(QJsonArray, updateQSGCtrl_testbrd, qml);
 
     rea::pipeline::instance()->add<QJsonObject>([pth](rea::stream<QJsonObject>* aInput){
         QImage img2(pth);
