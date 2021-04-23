@@ -85,13 +85,6 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
         aInput->outs<QJsonArray>(QJsonArray(), "updateQSGAttr_testbrd");
     }, rea::Json("name", "testQSGModel", "external", "qml"));
 
-    //interface adapter
-    extendSubject(QJsonArray, updateQSGAttr_testbrd, qml);
-    extendListener(QJsonArray, QSGAttrUpdated_testbrd, qml);
-    extendSubject(QJsonArray, updateQSGAttr_testbrd, js);
-    extendListener(QJsonArray, QSGAttrUpdated_testbrd, js);
-    extendSubject(QJsonArray, updateQSGCtrl_testbrd, qml);
-
     rea::pipeline::instance()->add<QJsonObject>([pth](rea::stream<QJsonObject>* aInput){
         QImage img2(pth);
         auto img = img2.scaled(600, 400);

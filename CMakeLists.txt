@@ -36,6 +36,7 @@ add_library(REA_TEST SHARED
     "inspector.h"
     "inspector.cpp"
     "inspector.ui"
+    "interface.cpp"
     "test_qml.cpp"
     "test_qsg.cpp"
     )
