@@ -748,13 +748,13 @@ ApplicationWindow {
 
                 Component.onCompleted: {
                     Pipeline.find("_listViewSelected")
-                    .next(function(aInput){
+                    .nextF(function(aInput){
                         console.log(aInput.data())
-                    }, "manual", {vtype: "array"})
+                    }, "manual")
                     Pipeline.find("pageList_listViewSelected")
-                    .next(function(aInput){
+                    .nextF(function(aInput){
                         console.log(aInput.data())
-                    }, "manual", {vtype: "array"})
+                    }, "manual")
                 }
             }
 
@@ -812,13 +812,13 @@ ApplicationWindow {
                     }
                     Component.onCompleted: {
                         Pipeline.find("_selectFile")
-                        .next(function(aInput){
+                        .nextF(function(aInput){
                             console.log(aInput.data())
-                        }, "manual", {vtype: "array"})
+                        }, "manual")
                         Pipeline.find("_selectFile")
-                        .next(function(aInput){
+                        .nextF(function(aInput){
                             console.log(aInput.data())
-                        }, "manual2", {vtype: "array"})
+                        }, "manual2")
                     }
                 }
 
@@ -828,9 +828,9 @@ ApplicationWindow {
                         Pipeline.run("_selectColor", {}, "manual2")
                     Component.onCompleted: {
                         Pipeline.find("_selectColor")
-                        .next(function(aInput){
+                        .nextF(function(aInput){
                             console.log(aInput.data())
-                        }, "manual2", {vtype: "string"})
+                        }, "manual2")
                     }
                 }
 
@@ -840,7 +840,7 @@ ApplicationWindow {
                         Pipeline.run("popMessage", {title: "hello4", text: "world"}, "manual")
                     Component.onCompleted: {
                         Pipeline.find("messagePoped")
-                        .next(function(aInput){
+                        .nextF(function(aInput){
                             console.log(aInput.data()["ok"])
                         }, "manual")
                     }
@@ -901,9 +901,9 @@ ApplicationWindow {
                 }
                 Component.onCompleted: {
                     Pipeline.find("_updateNavigation")
-                    .next(function(aInput){
+                    .nextF(function(aInput){
                         console.log(aInput.data())
-                    }, "manual", {vtype: "array"})
+                    }, "manual")
                 }
             }
             MenuItem{
@@ -959,9 +959,9 @@ ApplicationWindow {
                 }
                 Component.onCompleted: {
                     Pipeline.find("updateProgress")
-                    .next(function(aInput){
+                    .nextF(function(aInput){
                         console.assert(aInput.data() === hope)
-                    }, tag, {vtype: "number"})
+                    }, tag)
                 }
             }
         }
@@ -1023,11 +1023,11 @@ ApplicationWindow {
                     }
                     Component.onCompleted: {
                         Pipeline.find("_Searched")
-                        .next(function(aInput){
+                        .nextF(function(aInput){
                             var dt = aInput.data()
                             console.assert(dt === "search")
                             console.log(dt + " is searched")
-                        }, "manual", {vtype: "string"})
+                        }, "manual")
                     }
                 }
                 Sizable{
@@ -1360,9 +1360,9 @@ ApplicationWindow {
         ]
         Component.onCompleted: {
             Pipeline.find("_matrixSelected")
-            .next(function(aInput){
+            .nextF(function(aInput){
                 console.log("_matrixSelected: " + aInput.data())
-            }, "manual", {vtype: "number"})
+            }, "manual")
         }
     }
 

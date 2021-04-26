@@ -12,11 +12,11 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
     extendListener(QJsonObject, updateQSGMenu_testbrd, qml);
     extendTrigger(bool, doCommand, qml);
     //edit
-    extendTrigger(QJsonArray, testbrd_deleteShapes, qml);
-    extendTrigger(QJsonObject, testbrd_moveShapes, qml);
-    extendTrigger(QJsonObject, testbrd_arrangeShapes, qml);
-    extendTrigger(QJsonObject, testbrd_copyShapes, qml);
-    extendTrigger(QJsonObject, testbrd_pasteShapes, qml);
+    extendTrigger(QJsonArray, deleteShapes_testbrd, qml);
+    extendTrigger(QJsonObject, moveShapes_testbrd, qml);
+    extendTrigger(QJsonObject, arrangeShapes_testbrd, qml);
+    extendTrigger(QJsonObject, copyShapes_testbrd, qml);
+    extendTrigger(QJsonObject, pasteShapes_testbrd, qml);
     //draw
     extendTrigger(double, cancelDrawCircle_testbrd, qml);
     extendTrigger(double, cancelDrawEllipse_testbrd, qml);
