@@ -801,23 +801,27 @@ ApplicationWindow {
                     MenuItem{
                         text: "files"
                         onClicked: {
-                            Pipeline.run("_selectFile", {folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "manual")
+                            Pipeline.run("_selectFile", {folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "manual", {hello: "world"})
                         }
                     }
                     MenuItem{
                         text: "directory"
                         onClicked: {
-                            Pipeline.run("_selectFile", {folder: true}, "manual2")
+                            Pipeline.run("_selectFile", {folder: true}, "manual2", {hello: "world"})
                         }
                     }
                     Component.onCompleted: {
                         Pipeline.find("_selectFile")
                         .nextF(function(aInput){
-                            console.log(aInput.data())
+                            console.assert(aInput.scope().data("hello") === "world")
+                            test_sum++
+                            aInput.outs("Pass: _selectFile", "testSuccessQML")
                         }, "manual")
                         Pipeline.find("_selectFile")
                         .nextF(function(aInput){
-                            console.log(aInput.data())
+                            console.assert(aInput.scope().data("hello") === "world")
+                            test_sum++
+                            aInput.outs("Pass: _selectFolder", "testSuccessQML")
                         }, "manual2")
                     }
                 }
@@ -825,11 +829,13 @@ ApplicationWindow {
                 MenuItem{
                     text: "color"
                     onClicked:
-                        Pipeline.run("_selectColor", {}, "manual2")
+                        Pipeline.run("_selectColor", {}, "manual2", {hello: "world"})
                     Component.onCompleted: {
                         Pipeline.find("_selectColor")
                         .nextF(function(aInput){
-                            console.log(aInput.data())
+                            console.assert(aInput.scope().data("hello") === "world")
+                            test_sum++
+                            aInput.outs("Pass: _selectColor", "testSuccessQML")
                         }, "manual2")
                     }
                 }
@@ -837,11 +843,13 @@ ApplicationWindow {
                 MenuItem{
                     text: "MsgDialog"
                     onClicked:
-                        Pipeline.run("popMessage", {title: "hello4", text: "world"}, "manual")
+                        Pipeline.run("popMessage", {title: "hello4", text: "world"}, "manual", {hello: "world"})
                     Component.onCompleted: {
                         Pipeline.find("messagePoped")
                         .nextF(function(aInput){
-                            console.log(aInput.data()["ok"])
+                            console.assert(aInput.scope().data("hello") === "world")
+                            test_sum++
+                            aInput.outs("Pass: _popMessage", "testSuccessQML")
                         }, "manual")
                     }
                 }
@@ -902,7 +910,8 @@ ApplicationWindow {
                 Component.onCompleted: {
                     Pipeline.find("_updateNavigation")
                     .nextF(function(aInput){
-                        console.log(aInput.data())
+                        test_sum++
+                        aInput.outs("Pass: _updateNavigation", "testSuccessQML")
                     }, "manual")
                 }
             }
@@ -1026,7 +1035,8 @@ ApplicationWindow {
                         .nextF(function(aInput){
                             var dt = aInput.data()
                             console.assert(dt === "search")
-                            console.log(dt + " is searched")
+                            test_sum++
+                            aInput.outs("Pass: _Searched", "testSuccessQML")
                         }, "manual")
                     }
                 }
@@ -1088,10 +1098,6 @@ ApplicationWindow {
                             }
                         }
 
-                    }
-                    Rectangle{
-                        width: parent.width
-                        height: parent.height * 0.7
                     }
 
                     Log{
