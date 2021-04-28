@@ -30,6 +30,8 @@ public:
 public slots:
     // 接收到页面发送来的消息
     void onMsg(const QJsonValue& msg);
+public:
+    Q_INVOKABLE void onMsg2(const QJsonValue& msg);
 };
 
 class MainWindow : public QMainWindow

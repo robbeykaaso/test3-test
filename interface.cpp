@@ -1,5 +1,7 @@
 #include "rea.h"
 #include <QQmlApplicationEngine>
+#include "storage.h"
+#include "mainwindow.h"
 
 static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicationEngine*>* aInput){
     //interface adapter
@@ -29,4 +31,12 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
     extendTrigger(double, cancelDrawFree_testbrd, qml);
     extendTrigger(double, cancelDrawFreeLast_testbrd, qml);
     extendTrigger(QJsonObject, completeDrawFree_testbrd, qml);
+    //storage
+    rea::pipeline::instance()->add<bool>([](rea::stream<bool>* aInput){
+        aInput->scope()->cache<std::shared_ptr<rea::storageCache>>("data", std::make_shared<rea::storageCache>()
+                                                                            ->cache(rea::QSImage(), aInput->scope()->data<QString>("path")));
+        aInput->out();
+    }, rea::Json("name", "js_readSImage",
+                 "aftered", "readSImage",
+                 "external", "js"));
 }, QJsonObject(), "initRea");

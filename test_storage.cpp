@@ -1,12 +1,13 @@
-#include "reaC++.h"
-#include "storage0.h"
+#include "rea.h"
+#include "storage.h"
 #include <QJsonDocument>
 #include <QDir>
+#include <QQmlApplicationEngine>
 
 void testStorage(const QString& aRoot = ""){ //for fs: aRoot == ""; for minIO: aRoot != ""
-    using namespace rea;
     auto tag = "testStorage";
-    pipeline::find(aRoot + "writeJson")
+
+ /*   pipeline::find(aRoot + "writeJson")
         ->next(local(aRoot + "readJson"), tag)
         ->nextF<stgJson>([aRoot](rea::stream<stgJson>* aInput){
             auto js = aInput->data().getData();
@@ -57,14 +58,40 @@ void testStorage(const QString& aRoot = ""){ //for fs: aRoot == ""; for minIO: a
         ->next("testSuccess");
 
     pipeline::instance()->run<stgJson>(aRoot + "writeJson", stgJson(Json("hello", "world2"), "testFS.json"), tag);
+    */
 }
 
-static rea::regPip<QJsonObject> test_storage([](rea::stream<QJsonObject>* aInput){
-    if (!aInput->data().value("stg").toBool()){
-        aInput->out();
-        return;
-    }
-    static rea::fsStorage0 local_storage;
-    testStorage();
-    aInput->out();
-}, QJsonObject(), "unitTest");
+using namespace rea;
+static regPip<QQmlApplicationEngine*> test_qsg([](stream<QQmlApplicationEngine*>*){
+    static fsStorage local_storage;
+    static QString tag = "testStorage";
+    pipeline::instance()->add<QJsonObject>([](stream<QJsonObject>*){
+        auto stm = in(false, tag, std::make_shared<scopeCache>()
+                           ->cache("data", std::make_shared<storageCache>()
+                                            ->cache(Json("hello", "world2"), "testFS.json")))
+                   ->asyncCall("writeJsonObject")
+                   ->asyncCall("readJsonObject");
+        QJsonObject ret;
+        stm->scope()->data<std::shared_ptr<storageCache>>("data")->nextData<QJsonObject>(ret);
+        assert(ret.value("hello") == "world2");
+
+        stm->scope(true)->cache("data", std::make_shared<storageCache>()->cache(QJsonDocument(Json("hello", "world")).toJson(), "testFS.json"));
+        stm = stm->asyncCall("writeByteArray")->asyncCall("readByteArray");
+        QByteArray ret2;
+        stm->scope()->data<std::shared_ptr<storageCache>>("data")->nextData<QByteArray>(ret2);
+        assert(QJsonDocument::fromJson(ret2).object().value("hello") == "world");
+
+        stm->scope(true)->cache("data", std::make_shared<storageCache>()->cache(QByteArray(), "testDir/"));
+        stm = stm->asyncCall("writeByteArray");
+
+        auto stm2 = in<QString>("testDir", tag)->asyncCall("listFiles");
+        QJsonArray ret3;
+        stm2->scope()->data<std::shared_ptr<storageCache>>("data")->nextData<QJsonArray>(ret3);
+        assert(ret3.size() == 2);
+
+        stm2->asyncCall("deletePath");
+        in<QString>("testFS.json", tag)->asyncCall("deletePath");
+
+
+    }, Json("name", tag, "external", "js"));
+}, QJsonObject(), "initRea");

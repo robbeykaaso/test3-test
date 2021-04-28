@@ -42,6 +42,10 @@ function onBtnReportJSLeak()
     pipelines().run("reportJSLeak", 0)
 }
 
+function onBtnTestStorage(){
+    pipelines().run("testStorage", {})
+}
+
 var vis = false
 function onBtnModifyQSGBoard(){
     vis = !vis
@@ -58,14 +62,15 @@ pipelines().find("js_QSGAttrUpdated_testbrd")
 async function onBtnShowImage()
 {
     let dt = await pipelines().input("", "test24").asyncCallS("unitTestImage")
-    let img = new Image(400, 300)
+    let uri = dt.data()
 
+    let img = new Image(400, 300)
     const cvs = document.getElementById("cvs")
     const ctx = cvs.getContext("2d")
     img.onload = function(){
         ctx.drawImage(img, 0, 0, 400, 300)
     }
-    img.src = dt.data()
+    img.src = uri
 }
 
 //#endregion
@@ -424,7 +429,7 @@ function test28(){
 
 function test29(){
     pipelines().add(function(aInput){
-        context = aInput.data()
+        context = aInput.scope().data("ctx")
         console.assert(aInput.scope().data("ctx") == context)
         sendMessage("lala")
     }, {name: "test29", external: "c++"})

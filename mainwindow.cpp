@@ -16,6 +16,7 @@ ref: https://www.jianshu.com/p/3c3888329732
 #include "reaQML.h"
 #include "util.h"
 #include <sstream>
+#include"storage.h"
 
 
 static int test_sum = 0;
@@ -493,7 +494,7 @@ void MainWindow::unitTest(){
         rea::pipeline::instance()->run<JsContext*>("test29", m_jsContext, "", sp);
     });
 
-    rea::m_tests.insert("test31_", [](){
+    rea::m_tests.insert("test30_", [](){
         static std::mutex mtx;
         rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
                 aInput->scope()->cache<std::shared_ptr<QSet<QThread*>>>("threads", std::make_shared<QSet<QThread*>>())
@@ -519,11 +520,11 @@ void MainWindow::unitTest(){
                     assert(aInput->scope()->data<std::shared_ptr<QSet<QThread*>>>("threads")->size() == 8);
                     aInput->outs<QString>("Pass: test30", "testSuccess");
                 }
-            }, "", rea::Json("name", "test30__"));
+            }, "test30", rea::Json("name", "test30__"));
     });
 
     rea::m_tests.insert("test30", [](){
-        rea::pipeline::instance()->run<double>("test30", 0);
+        rea::pipeline::instance()->run<double>("test30", 0, "test30");
     });
 
     }
@@ -651,7 +652,7 @@ void MainWindow::unitTest(){
     rea::test("test21");
     rea::test("test24");
     rea::test("test25_");
-    rea::test("test31_");
+    rea::test("test30_");
     rea::test("test34");
     rea::test("test35");
     rea::test("test39");
@@ -678,6 +679,12 @@ void JsContext::sendMsg(QWebEnginePage* page, const QString& msg){
 }
 
 void JsContext::onMsg(const QJsonValue &msg)
+{
+    if (msg.isString())
+        emit recvdMsg(msg.toString());
+}
+
+void JsContext::onMsg2(const QJsonValue &msg)
 {
     if (msg.isString())
         emit recvdMsg(msg.toString());
