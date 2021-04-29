@@ -61,16 +61,18 @@ pipelines().find("js_QSGAttrUpdated_testbrd")
 
 async function onBtnShowImage()
 {
-    let dt = await pipelines().input("", "test24").asyncCallS("unitTestImage")
-    let uri = dt.data()
-
+    let dt = await pipelines().input(false, "test24", new scopeCache({path: "F:/3M/微信图片_20200916112142.png"})).asyncCallS("js_readImage")
+    if (!dt.data())
+        return
     let img = new Image(400, 300)
     const cvs = document.getElementById("cvs")
     const ctx = cvs.getContext("2d")
     img.onload = function(){
         ctx.drawImage(img, 0, 0, 400, 300)
     }
-    img.src = uri
+    img.src = dt.scope().data("uri")
+
+    await pipelines().input(false, "test24", new scopeCache({path: "test.png", uri: dt.scope().data("uri")})).asyncCallS("js_writeImage")
 }
 
 //#endregion

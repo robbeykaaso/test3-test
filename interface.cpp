@@ -1,7 +1,11 @@
 #include "rea.h"
 #include <QQmlApplicationEngine>
-#include "storage.h"
 #include "mainwindow.h"
+
+QImage Uri2QImage(const QString& aUri){
+    auto dt = aUri.mid(aUri.indexOf("64,") + 3, aUri.length()).trimmed();
+    return QImage::fromData(QByteArray::fromBase64(dt.toLocal8Bit()));
+}
 
 static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicationEngine*>* aInput){
     //interface adapter
@@ -32,11 +36,20 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
     extendTrigger(double, cancelDrawFreeLast_testbrd, qml);
     extendTrigger(QJsonObject, completeDrawFree_testbrd, qml);
     //storage
+    extendTrigger(bool, readImage, js);
     rea::pipeline::instance()->add<bool>([](rea::stream<bool>* aInput){
-        aInput->scope()->cache<std::shared_ptr<rea::storageCache>>("data", std::make_shared<rea::storageCache>()
-                                                                            ->cache(rea::QSImage(), aInput->scope()->data<QString>("path")));
+        if (aInput->data()){
+            auto img = aInput->scope()->data<QImage>("data");
+            auto uri = "data:image/png;base64, " + rea::QImage2Base64(img);
+            aInput->scope()->cache<QString>("uri", uri);
+        }
         aInput->out();
-    }, rea::Json("name", "js_readSImage",
-                 "aftered", "readSImage",
-                 "external", "js"));
+    }, rea::Json("after", "js_readImage"));
+    rea::pipeline::instance()->add<bool>([](rea::stream<bool>* aInput){
+        auto uri = aInput->scope()->data<QString>("uri");
+        aInput->scope()->cache<QImage>("data", Uri2QImage(uri));
+        aInput->out();
+    }, rea::Json("name", "js_writeImage",
+                 "aftered", "writeImage",
+                 "external",  "js"));
 }, QJsonObject(), "initRea");
