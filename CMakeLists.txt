@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(USEAWS ON)
+set(USEOPENCV ON)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -27,8 +30,7 @@ find_package(Qt5 COMPONENTS Widgets Core Quick SerialPort SerialBus WebEngineWid
 set(REA_DIR ${CMAKE_CURRENT_LIST_DIR}/../frm/cmake)
 find_package(REA)
 
-# 根据库文件代码生成动态库
-add_library(REA_TEST SHARED
+set(my_Sources
     "qml.qrc"
     "mainwindow.h"
     "mainwindow.cpp"
@@ -41,11 +43,8 @@ add_library(REA_TEST SHARED
     "test_qsg.cpp"
     "test_storage.cpp"
     )
-# 创建动态库别名
 
-#add_library(hello::library ALIAS REA_TEST)
-
-target_link_libraries(REA_TEST PRIVATE
+set(my_Libs
     Qt5::Core
     Qt5::Quick
     Qt5::Widgets
@@ -53,7 +52,49 @@ target_link_libraries(REA_TEST PRIVATE
     Qt5::SerialBus
     Qt5::WebEngineWidgets
     Qt5::WebEngine
-    ${REA_LIBS})
+    ${REA_LIBS}
+    )
+
+if (${USEAWS} STREQUAL "ON")
+    #set(AWSSDK_DIR "D:/awss3c++/aws-sdk-cpp/buildtest4/install/lib/cmake/AWSSDK")
+    message("use aws")
+    find_package(AWSSDK REQUIRED COMPONENTS core s3)
+    add_definitions(-DUSEAWS)
+    set(my_Sources
+        ${my_Sources}
+        "aws/aws_s3.h"
+        "aws/aws_s3.cpp"
+        "aws/awsStorage.h"
+        "aws/awsStorage.cpp"
+        "aws/test_storage.cpp")
+    set(my_Libs
+        ${my_Libs}
+        ${AWSSDK_LINK_LIBRARIES})
+    include_directories(${AWSSDK_INCLUDE_DIR})
+    message(${AWSSDK_LINK_LIBRARIES})
+endif()
+
+if (${USEOPENCV} STREQUAL "ON")
+    find_package(OpenCV REQUIRED)
+    add_definitions(-DUSEOPENCV)
+    set(my_Libs
+        ${my_Libs}
+        ${OpenCV_LIBS})
+    set(my_Sources
+        ${my_Sources})
+    include_directories(${OpenCV_INCLUDE_DIRS})
+endif()
+
+# 根据库文件代码生成动态库
+add_library(REA_TEST SHARED
+    ${my_Sources}
+    )
+# 创建动态库别名
+
+#add_library(hello::library ALIAS REA_TEST)
+
+target_link_libraries(REA_TEST PRIVATE
+    ${my_Libs})
 
 include_directories(${REA_INCLUDE_DIRS})
 

@@ -42,8 +42,26 @@ function onBtnReportJSLeak()
     pipelines().run("reportJSLeak", 0)
 }
 
+pipelines().find("testStorage")
+.nextF(function(aInput){
+    test_sum++
+    aInput.setData("Pass: testStorage").out()
+})
+.next("testSuccessJS")
+
 function onBtnTestStorage(){
     pipelines().run("testStorage", {})
+}
+
+pipelines().find("testAWSStorage")
+.nextF(function(aInput){
+    test_sum++
+    aInput.setData("Pass: testAWSStorage").out()
+})
+.next("testSuccessJS")
+
+function onBtnTestAWSStorage(){
+    pipelines().run("testAWSStorage", {})
 }
 
 var vis = false

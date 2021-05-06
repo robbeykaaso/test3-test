@@ -9,7 +9,7 @@ class fsStorage2 : public rea::fsStorage{
 public:
     fsStorage2(const QString& aRoot = "") : fsStorage(aRoot){}
     void initialize() override{
-        rea::pipeline::instance()->add<bool, rea::pipePartial>([this](rea::stream<bool>* aInput) {
+        rea::pipeline::instance()->add<bool, rea::pipeParallel>([this](rea::stream<bool>* aInput) {
             QJsonObject dt;
             auto ret = readJsonObject(aInput->scope()->data<QString>("path"), dt);
             aInput->scope()->cache("data", dt);
@@ -19,7 +19,7 @@ public:
 };
 
 using namespace rea;
-static regPip<QQmlApplicationEngine*> test_qsg([](stream<QQmlApplicationEngine*>*){
+static regPip<QQmlApplicationEngine*> test_stg([](stream<QQmlApplicationEngine*>*){
     static fsStorage local_storage;
     local_storage.initialize();
     static fsStorage2 local_storage2;
@@ -56,22 +56,25 @@ static regPip<QQmlApplicationEngine*> test_qsg([](stream<QQmlApplicationEngine*>
         in<QString>("testFS.json", tag)->asyncCall("deletePath");
 
         auto fls = in<QString>("test_storage", tag)->asyncCall("listFiles")->scope()->data<std::vector<QString>>("data");
-        tm0 = QDateTime::currentDateTime().toTime_t();
+
+/*        tm0 = QDateTime::currentDateTime().toTime_t();
         count0 = (fls.size() - 2) * 5;
         for (int i = 0; i < 5; ++i)
             for (auto i : fls)
                 if (i != "." && i != "..")
-                    aInput->outs(false, "readJsonObject", tag + "2")->scope()->cache<QString>("path", "test_storage/" + i);
-
-/*        tm1 = QDateTime::currentDateTime().toTime_t();
+                    aInput->outs(false, "readJsonObject", tag + "2")->scope(true)->cache<QString>("path", "test_storage/" + i);
+*/
+        tm1 = QDateTime::currentDateTime().toTime_t();
         count1 = (fls.size() - 2) * 5;
         for (int i = 0; i < 5; ++i)
             for (auto i : fls)
                 if (i != "." && i != "..")
-                    aInput->outs(false, "readJsonObject2", tag + "2")->scope()->cache<QString>("path", "test_storage/" + i);
-*/
+                    aInput->outs(false, "readJsonObject2", tag + "2")->scope(true)->cache<QString>("path", "test_storage/" + i);
+
+        aInput->outs(true);
     }, Json("name", tag, "external", "js"));
 
+    //prove reading of file system by multithreads
     rea::pipeline::instance()->find("readJsonObject")->nextF<bool>([](rea::stream<bool>* aInput){
         auto dt = aInput->scope()->data<QJsonObject>("data");
         count0--;
