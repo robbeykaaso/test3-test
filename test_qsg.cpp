@@ -4,10 +4,13 @@
 #include <QQmlApplicationEngine>
 
 static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicationEngine*>* aInput){
-    auto pth = "F:/ttt/Hearthstone Screenshot 03-30-20 20.54.09.png";
-    auto pth2 = "D:/mywork2/qsgboardtest/微信图片_20200916112142.png";
+    static QString pth = "F:/ttt/Hearthstone Screenshot 03-30-20 20.54.09.png";
+    static QString pth2 = "D:/mywork2/qsgboardtest/微信图片_20200916112142.png";
 
-    rea::pipeline::instance()->add<QJsonObject>([pth, pth2](rea::stream<QJsonObject>* aInput){
+    rea::pipeline::instance()->add<QJsonObject>([](rea::stream<QJsonObject>* aInput){
+        auto scp = aInput->scope();
+        pth = scp->data<QString>("image1");
+        pth2 = scp->data<QString>("image2");
         QImage img(pth);
 
         QHash<QString, QImage> imgs;
@@ -77,7 +80,7 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
         auto view = aInput->data();
         for (auto i : view.keys())
             cfg.insert(i, view.value(i));
-        aInput->scope()
+        aInput->scope(true)
                 ->cache<QJsonObject>("model", cfg)
                 ->cache<QHash<QString, QImage>>("image", imgs)
                 ->cache<QJsonObject>("image_data", img_data);
@@ -85,7 +88,7 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
         aInput->outs<QJsonArray>(QJsonArray(), "updateQSGAttr_testbrd");
     }, rea::Json("name", "testQSGModel", "external", "qml"));
 
-    rea::pipeline::instance()->add<QJsonObject>([pth](rea::stream<QJsonObject>* aInput){
+    rea::pipeline::instance()->add<QJsonObject>([](rea::stream<QJsonObject>* aInput){
         QImage img2(pth);
         auto img = img2.scaled(600, 400);
         auto cfg = rea::Json("width", img.width() ? img.width() : 600,

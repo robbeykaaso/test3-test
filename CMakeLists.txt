@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(USEAWS ON)
-set(USEOPENCV ON)
+set(USEAWS OFF)
+set(USEOPENCV OFF)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -132,4 +132,10 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${CMAKE_SOURCE_DIR}/mnist-core/dist"
     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../mnist-core"
+    COMMENT "copying resource.")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_SOURCE_DIR}/minIO"
+    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/.."
     COMMENT "copying resource.")

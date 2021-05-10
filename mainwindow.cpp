@@ -104,7 +104,7 @@ namespace rea {
 template <typename T, typename F>
 class pipeCustomQML : public rea::pipe<T, F> {
 public:
-    pipeCustomQML(rea::pipeline* aParent, const QString& aName, int aThreadNo = 0, bool aReplace = false) : rea::pipe<T, F>(aParent, aName, aThreadNo, aReplace) {
+    pipeCustomQML(rea::pipeline* aParent, const QString& aName, int aThreadNo = 0) : rea::pipe<T, F>(aParent, aName, aThreadNo) {
 
     }
 protected:
@@ -412,8 +412,8 @@ void MainWindow::unitTest(){
     rea::m_tests.insert("test25_", [](){
         rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
             rea::in<double>(25, "test25")
-                ->asyncCall<QString>("test25")
-                ->asyncCall("testSuccess");
+                ->asyncCall<QString>("test25", false)
+                ->asyncCall("testSuccess", false);
         }, rea::Json("name", "test25_", "thread", 4));
     });
 

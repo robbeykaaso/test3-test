@@ -255,8 +255,8 @@ ApplicationWindow {
 
             function test45(){
                 Pipeline.input(24, "test45")
-                .asyncCall("test45")
-                .asyncCall("testSuccessQML")
+                .asyncCall("test45", false)
+                .asyncCall("testSuccessQML", false)
             }
 
             function test46(){
@@ -433,12 +433,28 @@ ApplicationWindow {
             }
 
             Menu{
+                id: qsgshow
                 title: "updateModel"
+                property var gui: {
+                    "title": "select images",
+                    "content": {
+                        "image1": {
+                            value: "",
+                            trig: "selectQSGImage"
+                        },
+                        "image2": {
+                            value: "",
+                            trig: "selectQSGImage"
+                        }
+                    }
+                }
+
                 Action {
                     text: "model"
                     shortcut: "Ctrl+S"
                     onTriggered: {
-                        Pipeline.run("testQSGModel", view_cfg)
+                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
+                        //Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -447,7 +463,8 @@ ApplicationWindow {
                     shortcut: "Ctrl+F"
                     onTriggered: {
                         view_cfg["face"] = 100 - view_cfg["face"]
-                        Pipeline.run("testQSGModel", view_cfg)
+                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
+                       // Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -456,7 +473,8 @@ ApplicationWindow {
                     shortcut: "Ctrl+A"
                     onTriggered: {
                         view_cfg["arrow"]["visible"] = !view_cfg["arrow"]["visible"]
-                        Pipeline.run("testQSGModel", view_cfg)
+                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
+                        //Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -465,7 +483,8 @@ ApplicationWindow {
                     shortcut: "Ctrl+T"
                     onTriggered: {
                         view_cfg["text"]["visible"] = !view_cfg["text"]["visible"]
-                        Pipeline.run("testQSGModel", view_cfg)
+                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
+                        //Pipeline.run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -474,6 +493,23 @@ ApplicationWindow {
                     onTriggered: {
                         Pipeline.run("testFPS", {})
                     }
+                }
+                Component.onCompleted: {
+                    Pipeline.add(function(aInput){
+                        var pths = Pipeline.input({folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, aInput.tag()).asyncCall("_selectFile").data()
+                        if (pths.length)
+                            aInput.setData(pths[0]).out()
+                        else
+                            aInput.setData("").out()
+                    }, {name: "selectQSGImage"})
+
+                    Pipeline.find("_setParam").nextF(function(aInput){
+                        var dt = aInput.data()
+                        gui["content"]["image1"]["value"] = dt["image1"]
+                        gui["content"]["image2"]["value"] = dt["image2"]
+                        aInput.scope().cache("image1", dt["image1"]).cache("image2", dt["image2"])
+                        aInput.outs(view_cfg, "testQSGModel")
+                    }, "testQSGModel")
                 }
             }
 
@@ -782,6 +818,71 @@ ApplicationWindow {
                     text: "nest"
                     onClicked:
                         nest.show()
+                }
+                MenuItem{
+                    property var val: {
+                        "spin_dflt": 1,
+                        "spin": 2,
+                        "check_dflt": true,
+                        "check": true,
+                        "edit_dflt": "dflt",
+                        "edit": "edit",
+                        "combo": 1,
+                        "comboe": "sel3"
+                    }
+
+                    text: "PWindow"
+                    onClicked: {
+                        var cnt = {
+                            spin_dflt: {
+                            },
+                            spin: {
+                                type: "spin",
+                                caption: "spin_"
+                            },
+                            check_dflt: {
+                            },
+                            check: {
+                                type: "check",
+                                caption: "check_"
+                            },
+                            edit_dflt: {
+                            },
+                            edit: {
+                                type: "edit",
+                                caption: "edit_",
+                                trig: "getXXXParam"
+                            },
+                            combo: {
+                                type: "combo",
+                                model: ["sel1", "sel2"],
+                                proto: ["key1", "key2"],
+                                caption: "combo_"
+                            },
+                            comboe: {
+                                type: "comboe",
+                                model: ["sel1", "sel2"],
+                                caption: "comboe_"
+                            }
+                        }
+                        for (var i in cnt)
+                            cnt[i]["value"] = val[i]
+                        Pipeline.run("_setParam", {
+                                                title: "set Param",
+                                                content: cnt
+                                            }, "manual")
+                    }
+                    Component.onCompleted: {
+                        Pipeline.add(function(aInput){
+                            aInput.setData("XXXParam").out()
+                        }, {name: "getXXXParam"})
+                        Pipeline.find("_setParam").nextF(function(aInput){
+                            var dt = aInput.data()
+                            for (var i in val)
+                                if (dt[i] !== undefined)
+                                    val[i] = dt[i]
+                        }, "manual")
+                    }
                 }
                 MenuItem{
                     text: "webwidget"
@@ -1679,6 +1780,27 @@ ApplicationWindow {
     ColorSelect{
 
     }
+    PWindow{
+
+    }
+    Component.onCompleted: {
+        Pipeline.add(function(aInput){
+            var tg = aInput.tag()
+            Pipeline.find("_fileSelected").nextF(function(aInput){
+                aInput.out(tg)
+            }, "manual", {name: "js_fileSelected",
+                    type: "Partial",
+                    external: "js",
+                    replace: true})
+
+            aInput.out("manual")
+        }, {name: "js_selectFile",
+            aftered: "_selectFile",
+            type: "Delegate",
+            delegate: "js_fileSelected",
+            external: "js"})
+    }
+
     Component.onDestruction:{
         Pipeline.run("unloadMain", 0)
     }

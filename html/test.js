@@ -22,7 +22,7 @@ function recvMessage(msg)
 
 function onBtnSendMsg()
 {
-   // for (let i = 0; i < 100; ++i)
+    for (let i = 0; i < 100; ++i)
         pipelines().run("unitTest")
     //var cmd = document.getElementById("待发送消息").value;
 }
@@ -79,7 +79,10 @@ pipelines().find("js_QSGAttrUpdated_testbrd")
 
 async function onBtnShowImage()
 {
-    let dt = await pipelines().input(false, "test24", new scopeCache({path: "F:/3M/微信图片_20200916112142.png"})).asyncCallS("js_readImage")
+    let dt = await pipelines().input({folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "test24").asyncCallS("js_selectFile")
+    if (!dt.data().length)
+        return
+    dt = await pipelines().input(false, "test24", new scopeCache({path: dt.data()[0]})).asyncCallS("js_readImage")
     if (!dt.data())
         return
     let img = new Image(400, 300)
@@ -628,6 +631,7 @@ test49_()
 
             [test21, 1],  //test pipe mixture delegate: js->js.future(c++)->c++, js
             [test23, 1], //test js asyncCall
+
             [test24, 1], //test pipe mixture: js.asyncCall.c++
             [test49, 1]  //test custom js pipe
         ]
@@ -672,6 +676,7 @@ test49_()
             [test13()]: 3, //test c++ pipe future
             [test14()]: 1, //test c++ pipe partial
             [test18()]: 1, //test c++ pipe delegate and pipe param
+
             [test22()]: 1, //test c++ asyncCall
             [test26()]: 1, //test c++ aop and keep topo
             [test27()]: 1, //test c++ functor
@@ -685,7 +690,6 @@ test49_()
             [test42()]: 1, //test pipe mixture delegate: c++->c++.future(qml)->qml, c++
             [test43_()]: 1,  //test pipe mixture delegate: qml->qml.future(c++)->c++, qml
             [test46()]: 1, //test pipe mixture: c++.asyncCall.qml
-
                     }, "unitTestC++")
     }, {name: "unitTest"})
     .next("unitTestC++")
