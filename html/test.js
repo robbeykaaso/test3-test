@@ -22,7 +22,7 @@ function recvMessage(msg)
 
 function onBtnSendMsg()
 {
-    for (let i = 0; i < 100; ++i)
+//    for (let i = 0; i < 100; ++i)
         pipelines().run("unitTest")
     //var cmd = document.getElementById("待发送消息").value;
 }

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(USEAWS OFF)
 set(USEOPENCV OFF)
+set(USEGTEST ON)
+set(USEBREAKPAD ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -9,6 +11,9 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
 
 #if (CMAKE_BUILD_TYPE STREQUAL Debug)
 #set(${CMAKE_BINARY_DIR} install)
@@ -25,6 +30,7 @@ endif()
 project(REA_TEST)
 
 #add_definitions(-DEXPORTDLL)
+add_compile_definitions("GTEST_LINKED_AS_SHARED_LIBRARY=1")
 
 find_package(Qt5 COMPONENTS Widgets Core Quick SerialPort SerialBus WebEngineWidgets WebEngine REQUIRED)
 set(REA_DIR ${CMAKE_CURRENT_LIST_DIR}/../frm/cmake)
@@ -80,9 +86,47 @@ if (${USEOPENCV} STREQUAL "ON")
     set(my_Libs
         ${my_Libs}
         ${OpenCV_LIBS})
-    set(my_Sources
-        ${my_Sources})
+#    set(my_Sources
+#        ${my_Sources})
     include_directories(${OpenCV_INCLUDE_DIRS})
+endif()
+
+if (${USEGTEST} STREQUAL "ON")
+    #set(GTEST_ROOT "D:/mywork3/gtest/googletest-master/install/lib/cmake/GTest")
+    if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+        set(GTEST_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtestd.lib")
+        set(GTEST_MAIN_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtest_maind.lib")
+    else()
+        set(GTEST_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtest.lib")
+        set(GTEST_MAIN_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtest_main.lib")
+    endif()
+    set(GTEST_INCLUDE_DIR "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/include")
+    find_package(GTest REQUIRED)
+    set(my_Libs
+        ${my_Libs}
+        ${GTEST_LIBRARIES})
+    set(my_Sources
+        ${my_Sources}
+        "test_gtest.cpp")
+    include_directories(${GTEST_INCLUDE_DIRS})
+endif()
+
+if (${USEBREAKPAD} STREQUAL "ON")
+    set(my_Libs
+        ${my_Libs}
+        "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64/WinInet.Lib"
+        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/common.lib"
+        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/exception_handler.lib"
+        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/crash_report_sender.lib"
+        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/crash_generation_client.lib"
+        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/crash_generation_server.lib"
+        )
+    set(my_Sources
+        ${my_Sources}
+        "test_breakpad.cpp")
+    include_directories(
+        "D:/mywork3/breakpad/breakpad-main/src"
+        )
 endif()
 
 # 根据库文件代码生成动态库
