@@ -6,6 +6,9 @@
 #include <QDir>
 #include <QQmlApplicationEngine>
 
+const std::wstring URL = L"http://127.0.0.1";
+//const std::wstring URL = L"https://www.robbeykaaso.work";
+
 void sendReport(const wchar_t* aID, const wchar_t* aPath){
     google_breakpad::CrashReportSender sd(L"crash/crash.checkpoint");
     std::map<std::wstring, std::wstring> prms;
@@ -15,9 +18,42 @@ void sendReport(const wchar_t* aID, const wchar_t* aPath){
     fls.insert(std::pair<std::wstring, std::wstring>(L"data0", aPath));
     fls.insert(std::pair<std::wstring, std::wstring>(L"data1", L".version"));
     std::wstring ret;
-    auto tmp = sd.SendCrashReport(L"http://127.0.0.1:3000/test/upload", prms, fls, &ret); //type: multi/form-data
-    std::cout << tmp << std::endl;
+    sd.SendCrashReport(URL + L":3000/test/upload", prms, fls, &ret); //type: multi/form-data
 }
+
+std::wstring QString2WString(const QString& aString){
+    wchar_t tmp[MAX_PATH];
+    aString.toWCharArray(tmp);
+    tmp[aString.length()] = L'\0';
+    std::wstring ret = tmp;
+    return ret;
+}
+
+static rea::regPip<QJsonObject> test_upload_report([](rea::stream<QJsonObject>* aInput){
+    auto dt = aInput->data();
+    auto type = dt.value("type").toString();
+    QDir().mkdir(type);
+    auto tp = QString2WString(type);
+    google_breakpad::CrashReportSender sd(tp + std::wstring(L"/") + tp + L".checkpoint");
+
+    std::map<std::wstring, std::wstring> prms;
+    prms.insert(std::pair<std::wstring, std::wstring>(L"id", QString2WString(rea::generateUUID())));
+    prms.insert(std::pair<std::wstring, std::wstring>(L"type", tp));
+    auto prm = dt.value("params").toObject();
+    for (auto i : prm.keys()){
+        prms.insert(std::pair<std::wstring, std::wstring>(QString2WString(i), QString2WString(prm.value(i).toString())));
+    }
+
+    std::map<std::wstring, std::wstring> fls;
+    auto fl = dt.value("files").toArray();
+    for (auto i = 0; i < fl.size(); ++i)
+        fls.insert(std::pair<std::wstring, std::wstring>(L"data" + QString2WString(QString::number(i)),
+                                                         QString2WString(fl[i].toString())));
+    std::wstring ret;
+    sd.SendCrashReport(URL + L":3000/test/upload", prms, fls, &ret); //type: multi/form-data
+
+    aInput->out();
+}, rea::Json("name", "sendReport"));
 
 static bool dumpCallback(const wchar_t *dump_path, const wchar_t *id,
   void *context, EXCEPTION_POINTERS *exinfo,

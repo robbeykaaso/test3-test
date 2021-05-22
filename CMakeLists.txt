@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(USEAWS OFF)
-set(USEOPENCV OFF)
-set(USEGTEST ON)
-set(USEBREAKPAD ON)
-
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -61,73 +56,12 @@ set(my_Libs
     ${REA_LIBS}
     )
 
-if (${USEAWS} STREQUAL "ON")
-    #set(AWSSDK_DIR "D:/awss3c++/aws-sdk-cpp/buildtest4/install/lib/cmake/AWSSDK")
-    message("use aws")
-    find_package(AWSSDK REQUIRED COMPONENTS core s3)
-    add_definitions(-DUSEAWS)
-    set(my_Sources
-        ${my_Sources}
-        "aws/aws_s3.h"
-        "aws/aws_s3.cpp"
-        "aws/awsStorage.h"
-        "aws/awsStorage.cpp"
-        "aws/test_storage.cpp")
-    set(my_Libs
-        ${my_Libs}
-        ${AWSSDK_LINK_LIBRARIES})
-    include_directories(${AWSSDK_INCLUDE_DIR})
-    message(${AWSSDK_LINK_LIBRARIES})
-endif()
-
-if (${USEOPENCV} STREQUAL "ON")
-    find_package(OpenCV REQUIRED)
-    add_definitions(-DUSEOPENCV)
-    set(my_Libs
-        ${my_Libs}
-        ${OpenCV_LIBS})
-#    set(my_Sources
-#        ${my_Sources})
-    include_directories(${OpenCV_INCLUDE_DIRS})
-endif()
-
-if (${USEGTEST} STREQUAL "ON")
-    #set(GTEST_ROOT "D:/mywork3/gtest/googletest-master/install/lib/cmake/GTest")
-    if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-        set(GTEST_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtestd.lib")
-        set(GTEST_MAIN_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtest_maind.lib")
-    else()
-        set(GTEST_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtest.lib")
-        set(GTEST_MAIN_LIBRARY "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/lib/gtest_main.lib")
+file(GLOB PLUGINS ${CMAKE_CURRENT_SOURCE_DIR}/plugin/*)
+foreach(plg ${PLUGINS})
+    if (EXISTS ${plg}/CMakeLists.txt)
+        include(${plg}/CMakeLists.txt)
     endif()
-    set(GTEST_INCLUDE_DIR "D:/mywork3/gtest/googletest-master/install/${CMAKE_BUILD_TYPE}/include")
-    find_package(GTest REQUIRED)
-    set(my_Libs
-        ${my_Libs}
-        ${GTEST_LIBRARIES})
-    set(my_Sources
-        ${my_Sources}
-        "test_gtest.cpp")
-    include_directories(${GTEST_INCLUDE_DIRS})
-endif()
-
-if (${USEBREAKPAD} STREQUAL "ON")
-    set(my_Libs
-        ${my_Libs}
-        "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.14393.0/um/x64/WinInet.Lib"
-        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/common.lib"
-        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/exception_handler.lib"
-        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/crash_report_sender.lib"
-        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/crash_generation_client.lib"
-        "D:/mywork3/breakpad/breakpad-main/src/client/windows/${CMAKE_BUILD_TYPE}/lib/crash_generation_server.lib"
-        )
-    set(my_Sources
-        ${my_Sources}
-        "test_breakpad.cpp")
-    include_directories(
-        "D:/mywork3/breakpad/breakpad-main/src"
-        )
-endif()
+endforeach()
 
 # 根据库文件代码生成动态库
 add_library(REA_TEST SHARED
@@ -149,37 +83,14 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMENT "copying resource.")
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/../frm/html"
-    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
-    COMMENT "copying resource.")
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_CURRENT_LIST_DIR}/test.qml"
     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/.."
     COMMENT "copying resource.")
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/html"
-    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
-    COMMENT "copying resource.")
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/test_vue/dist"
-    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../test_vue"
-    COMMENT "copying resource.")
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/mnist-core/dist"
-    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../mnist-core"
-    COMMENT "copying resource.")
-
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/minIO"
-    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/.."
-    COMMENT "copying resource.")
+file(GLOB PLUGINS ${CMAKE_CURRENT_SOURCE_DIR}/plugin/*)
+foreach(plg ${PLUGINS})
+    if (EXISTS ${plg}/CMakeLists2.txt)
+        include(${plg}/CMakeLists2.txt)
+    endif()
+endforeach()

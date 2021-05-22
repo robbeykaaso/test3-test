@@ -3,7 +3,9 @@
 
 #include "aws_s3.h"
 #include "storage.h"
-#include "opencv2/opencv.hpp"
+#ifdef USEOPENCV
+    #include "opencv2/opencv.hpp"
+#endif
 
 class awsStorage : public rea::fsStorage {
 public:

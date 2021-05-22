@@ -515,9 +515,14 @@ ApplicationWindow {
 
                     Pipeline.find("_setParam").nextF(function(aInput){
                         var dt = aInput.data()
-                        gui["content"]["image1"]["value"] = dt["image1"]
-                        gui["content"]["image2"]["value"] = dt["image2"]
-                        aInput.scope().cache("image1", dt["image1"]).cache("image2", dt["image2"])
+                        if (dt["image1"]){
+                            gui["content"]["image1"]["value"] = dt["image1"]
+                            aInput.scope().cache("image1", dt["image1"])
+                        }
+                        if (dt["image2"]){
+                            gui["content"]["image2"]["value"] = dt["image2"]
+                            aInput.scope().cache("image2", dt["image2"])
+                        }
                         aInput.outs(view_cfg, "testQSGModel")
                     }, "testQSGModel")
                 }

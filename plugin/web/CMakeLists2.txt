@@ -1,0 +1,27 @@
+set(USEWEB ON)
+
+if (${USEWEB} STREQUAL "ON")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/../frm/html"
+        "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
+        COMMENT "copying resource.")
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/plugin/web/html"
+        "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../html"
+        COMMENT "copying resource.")
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/plugin/web/test_vue/dist"
+        "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../test_vue"
+        COMMENT "copying resource.")
+
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/plugin/web/mnist-core/dist"
+        "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/../mnist-core"
+        COMMENT "copying resource.")
+endif()

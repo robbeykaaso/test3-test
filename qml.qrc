@@ -3,7 +3,5 @@
         <file>test.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>test2.qml</file>
-        <file>html/test.js</file>
-        <file>html/test.html</file>
     </qresource>
 </RCC>

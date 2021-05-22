@@ -87,4 +87,6 @@ static rea::regPip<double> test_gtest([](rea::stream<double>* aInput){
     testing::GTEST_FLAG(output) = "xml:report.xml";
     testing::InitGoogleTest();
     RUN_ALL_TESTS();
+    rea::pipeline::instance()->call<QJsonObject>("sendReport", rea::Json("type", "test",
+                                                                         "files", rea::JArray("report.xml")));
 }, rea::Json("name", "gTest", "external", "qml"));

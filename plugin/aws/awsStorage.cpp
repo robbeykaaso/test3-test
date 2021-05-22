@@ -116,6 +116,7 @@ void awsStorage::initialize(){
         aInput->setData(write##aType(aInput->scope()->data<QString>("path"), aInput->scope()->data<Q##aType>("data")))->out(); \
 }, rea::Json("name", m_root + STR(write##aType)))
 
+#ifdef USEOPENCV
     rea::pipeline::instance()->add<bool, rea::pipeParallel>([this](rea::stream<bool>* aInput) {
         cv::Mat dt;
         auto ret = readCVMat(aInput->scope()->data<QString>("path"), dt);
@@ -126,6 +127,7 @@ void awsStorage::initialize(){
     rea::pipeline::instance()->add<bool, rea::pipeParallel>([this](rea::stream<bool>* aInput){
         aInput->setData(writeCVMat(aInput->scope()->data<QString>("path"), aInput->scope()->data<cv::Mat>("data")))->out();
     }, rea::Json("name", m_root + "writeCVMat"));
+#endif
 
     READSTORAGE(JsonObject);
     READSTORAGE(ByteArray);
