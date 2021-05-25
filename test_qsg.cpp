@@ -55,8 +55,15 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
                                             "shp_0", rea::Json(
                                                          "type", "poly",
                                                          "points", rea::JArray(QJsonArray(),
-                                                                               rea::JArray(50, 50, 200, 50, 200, 200, 50, 200, 50, 50),
-                                                                               rea::JArray(80, 70, 120, 100, 120, 70, 80, 70)),
+                                                                               rea::JArray(0, 0,
+                                                                                           200, 0,
+                                                                                           200, 200,
+                                                                                           0, 200,
+                                                                                           0, 0),
+                                                                               rea::JArray(80, 70,
+                                                                                           120, 100,
+                                                                                           120, 70,
+                                                                                           80, 70)),
                                                          "color", "red",
                                                          "width", 3,
                                                          "caption", "poly",
@@ -67,12 +74,12 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
                                                                                                                       ),
                                             "shp_1", rea::Json(
                                                          "type", "ellipse",
-                                                         "center", rea::JArray(400, 400),
+                                                         "center", rea::JArray(200, 200),
                                                          "radius", rea::JArray(300, 200),
                                                          "width", 5,
                                                          "style", "dash",
                                                          "ccw", false,
-                                                         "angle", 30,
+                                                         "angle", 45,
                                                          "caption", "ellipse"
                                                                                                                       )
                                                                                                 ));

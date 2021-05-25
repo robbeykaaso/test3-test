@@ -673,6 +673,22 @@ ApplicationWindow {
                 }
                 MenuItem{
                     checkable: true
+                    text: "polyAngle"
+                    onClicked: {
+                        checked != checked
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["angle"], val: checked ? 45 : 0}], "polyAngle")
+                    }
+                }
+                MenuItem{
+                    checkable: true
+                    text: "imageAngle"
+                    onClicked: {
+                        checked != checked
+                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["angle"], val: checked ? 45 : 0}], "imageAngle")
+                    }
+                }
+                MenuItem{
+                    checkable: true
                     text: "ellipseAngle"
                     onClicked: {
                         checked != checked
