@@ -1,26 +1,26 @@
 {
   "name": "webpack",
-  "version": "1.0.0",
+  "version": "5.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "bootstrap": "^5.0.1",
     "jquery": "^3.6.0",
     "jstree": "^3.3.11",
     "konva": "^7.2.5",
-    "webpack": "^4.17.1",
-    "webpack-dev-server": "^3.8.2"
+    "reajs": "^1.0.1"
   },
   "devDependencies": {
+    "autoprefixer": "^10.2.6",
     "css-loader": "^5.2.6",
     "file-loader": "^6.2.0",
     "style-loader": "^2.0.0",
-    "url-loader": "^4.1.1",
-    "webpack-cli": "^4.7.0"
+    "url-loader": "^4.1.1"
   },
   "scripts": {
-    "start": "./node_modules/.bin/webpack",
+    "start": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "./node_modules/.bin/webpack-dev-server --open"
+    "server": "webpack-dev-server --open"
   },
   "author": "",
   "license": "ISC"

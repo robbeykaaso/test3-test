@@ -1,5 +1,5 @@
 var config = require('./config.json');
-var rea = require('./rea.js')
+var rea = require('reajs')
 
 rea.pipelines().add(function(aInput){
   aInput.setData(config.greetText).out()

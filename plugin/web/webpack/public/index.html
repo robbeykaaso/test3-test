@@ -11,15 +11,16 @@
     <script type="text/javascript" src="./qwebchannel.js"></script>
     <script type="text/javascript" src="./reaCplus.js"></script>
     <script type="text/javascript" src="./test.js"></script> -->
-    <div id='root'>
+    <div class="boxColumn">
+        <input type="button" value="unitTest" class="button" onclick="onBtnSendMsg()" />
+        <div class="boxRow">
+            <div class="myBoundLine" style="width:300px;">
+                <div class="myScrollableBlock">
+                    <div id="jstree"></div>
+                </div>
+            </div>
+            <div class="myBoundLine" style="flex-grow:1"></div>
+        </div>
     </div>
-    <input id="待发送消息" type="text" name="msgText" />
-    <input type="button" value="unitTest" onclick="onBtnSendMsg()" />
-    <input type="button" value="showImage" onclick="onBtnShowImage()" />
-    <input type="button" value="reportCLeak" onclick="onBtnReportCLeak()" />
-    <input type="button" value="reportQMLLeak" onclick="onBtnReportQMLLeak()" />
-    <input type="button" value="reportJSLeak" onclick="onBtnReportJSLeak()" />
-    <canvas id ="cvs" width="400" height="300" style="border: 1px solid black"></canvas>
-    <div id="jstree"></div>
 </body>
 </html>

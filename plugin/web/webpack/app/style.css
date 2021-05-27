@@ -1,0 +1,26 @@
+/* http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html?utm_source=tuicool */
+.boxColumn{
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+}
+.button{
+  width: 100px;
+  height: 50px;
+}
+.boxRow{
+  display: flex;
+  flex-direction: row;
+  width:100vw;
+  height: 90vh;
+  flex-grow: 1;
+}
+.myScrollableBlock {
+  display: block;
+  height: 100%;
+  overflow: auto;
+}
+.myBoundLine{
+  box-shadow: inset 1px -1px 1px #444, inset -1px 1px 1px #444;
+}
