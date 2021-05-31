@@ -1,12 +1,6 @@
-const greeter = require('./Greeter.js');
-const jstree_demo = require('./jsTree')
-
-window.onBtnSendMsg = async function()
-{
-    //pipelines().run("unitTest")
-    //const ret = await greeter()
-    //document.querySelector("#root").appendChild(ret);
-    await jstree_demo()
-    //var cmd = document.getElementById("待发送消息").value;
-    //sendMessage(cmd);
-}
+//const greeter = require('./Greeter.js');
+global.$ = require('jquery')
+require("./style.css")
+global.rea = require('reajs')
+require('./fsTree')
+require('./navMenu')

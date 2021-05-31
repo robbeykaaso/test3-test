@@ -6,13 +6,27 @@
     <title>web前端</title>
 </head>
 <body>
-    <script src="bundle.js"></script>
     <!-- <script type="text/javascript" src="./rea.js"></script>
     <script type="text/javascript" src="./qwebchannel.js"></script>
     <script type="text/javascript" src="./reaCplus.js"></script>
     <script type="text/javascript" src="./test.js"></script> -->
     <div class="boxColumn">
-        <input type="button" value="unitTest" class="button" onclick="onBtnSendMsg()" />
+        <nav role="navigation">
+        <ul id="main-menu" class="sm sm-simple">
+            <li><a href="#">File</a>
+                <ul>
+                    <li><a href="#">Open Folder</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Edit</a></li>
+            <li><a href="#">View</a></li>
+            <li><a href="#">Help</a></li>
+        </ul>
+        </nav>
+        <!-- <div class="buttonRow">
+            <input type="button" value="unitTest" class="button" onclick="onBtnSendMsg()" />
+            <input type="button" value="unitTest2" class="button" onclick="onBtnSendMsg2()" />
+        </div> -->
         <div class="boxRow">
             <div class="myBoundLine" style="width:300px;">
                 <div class="myScrollableBlock">
@@ -22,5 +36,6 @@
             <div class="myBoundLine" style="flex-grow:1"></div>
         </div>
     </div>
+    <script src="bundle.js"></script>
 </body>
 </html>
