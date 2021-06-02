@@ -65,7 +65,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
     });*/
 
     m_webChannel = new QWebChannel();
-    m_webChannel->registerObject("Pipeline", rea::pipeline::instance("js"));
+    m_webChannel->registerObject("Pipelinec++", rea::pipeline::instance("js"));
+    m_webChannel->registerObject("Pipelineqml", rea::pipeline::instance("qmljs"));
     m_webView->page()->setWebChannel(m_webChannel);
     m_webView->setUrl(QApplication::applicationDirPath() + "/html/test.html");
 

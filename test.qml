@@ -1649,7 +1649,7 @@ ApplicationWindow {
                 id: webview_chn
                 /*Component.onCompleted: {
                     var stm = Pipeline.asyncCall("pipelineJSObject", 0)
-                    webview_chn.registerObject("Pipeline", stm.data())
+                    webview_chn.registerObject("Pipelinec++", stm.data())
                     //webview_chn.registerObject("Pipeline", stm.scope().data("pipeline"))
                     webview.url = "file:/html/test.html"
                 }*/

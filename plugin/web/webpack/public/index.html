@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>web前端</title>
+    <title>translater</title>
 </head>
 <body>
     <!-- <script type="text/javascript" src="./rea.js"></script>
@@ -19,14 +19,14 @@
                 </ul>
             </li>
             <li><a href="#">Edit</a></li>
-            <li><a href="#">View</a></li>
+            <li><a href="#">View</a>
+                <ul>
+                    <li><a href="#"> Toolbox</a></li>
+                </ul>
+            </li>
             <li><a href="#">Help</a></li>
         </ul>
         </nav>
-        <!-- <div class="buttonRow">
-            <input type="button" value="unitTest" class="button" onclick="onBtnSendMsg()" />
-            <input type="button" value="unitTest2" class="button" onclick="onBtnSendMsg2()" />
-        </div> -->
         <div class="boxRow">
             <div class="myBoundLine" style="width:300px;">
                 <div class="myScrollableBlock">
@@ -35,6 +35,17 @@
             </div>
             <div class="myBoundLine" style="flex-grow:1"></div>
         </div>
+    </div>
+    <div id="toolbox" class="buttongrid">
+        <input type="button" value="default" class="button" onclick="onBtnDefaultMode()" />
+        <input type="button" value="select" class="button" onclick="onBtnSelectMode()" />
+        <input type="button" value="free" class="button" onclick="onBtnFreeMode()" />
+        <input type="button" value="rect" class="button" onclick="onBtnRectMode()" />
+        <input type="button" value="line" class="button" onclick="onBtnLineMode()" />
+        <input type="button" value="ellipse" class="button" onclick="onBtnEllipseMode()" />
+        <input type="button" value="circle" class="button" onclick="onBtnCircleMode()" />
+        <input type="button" value="poly" class="button" onclick="onBtnPolyMode()" />
+        <input type="button" value="node" class="button" onclick="onBtnNodeMode()" />
     </div>
     <script src="bundle.js"></script>
 </body>
