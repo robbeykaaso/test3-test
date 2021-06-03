@@ -8,6 +8,7 @@ import QtWebEngine 1.8
 import QtWebChannel 1.0
 import "qml/gui/Basic"
 import "qml/gui/Pipe"
+import "qml/gui/Custom"
 import "qml/gui/Pipe/TreeNodeView"
 import Pipeline 1.0
 import QSGBoard 1.0
@@ -321,6 +322,13 @@ ApplicationWindow {
                 Pipeline.run("test48", 0)
             }
 
+            function test50(){
+                Pipeline.add(function(aInput){
+                    console.assert(aInput.data() == 1.0)
+                    aInput.out()
+                }, {name: "test50_qml", external: "js"})
+            }
+
             Component.onCompleted: {
                 Pipeline.add(function(aInput){
                     test_pass++
@@ -364,6 +372,7 @@ ApplicationWindow {
                 test41_()
                 test46()
                 test48_()
+                test50()
 
                 Pipeline.add(function(aInput){
                     var dt = aInput.data()
@@ -1189,47 +1198,9 @@ ApplicationWindow {
                             beforeDestroy()
                         }
 
-                        Menu{
-                            id: boardmenu
-                            property var cmenu
-                            visible: false
-                            width: 120
-                            z: 9
+                        BoardMenu{
 
-                            function executeCommand(aCaption){
-                                Pipeline.run("qml_" + cmenu[aCaption]["cmd"], cmenu[aCaption]["param"])
-                            }
-
-                            Component.onCompleted: {
-                                cmenu = {}
-                                Pipeline.find("qml_updateQSGMenu_" + testbrd.name).nextF(function(aInput){
-                                    var dt = aInput.data()
-                                    visible = dt["x"] !== undefined && dt["y"] !== undefined
-                                    if (dt["menu"]){
-                                        var mn = dt["menu"]
-                                        for (var i = count - 1; i >= 0; --i)
-                                            removeItem(itemAt(i))
-                                        for (var j in mn){
-                                            cmenu[mn[j]["cap"]] = mn[j]
-                                            var src = "import QtQuick 2.12; import QtQuick.Controls 2.5;"
-                                            src += "MenuItem{"
-                                            src += "text: '" + Pipeline.tr(mn[j]["cap"]) + "';"
-                                            //src += "font.pixelSize: " + fontsize + ";"
-                                            src += "onClicked: {"
-                                            src += "boardmenu.executeCommand('" + mn[j]["cap"] + "');"
-                                            src += "}}"
-                                            insertItem(0, Qt.createQmlObject(src, boardmenu))
-                                        }
-                                    }
-                                    if (visible){
-                                        x = dt["x"]
-                                        y = dt["y"]
-                                    }
-                                    aInput.out()
-                                })
-                            }
                         }
-
                     }
 
                     Log{

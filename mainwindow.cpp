@@ -629,7 +629,7 @@ void MainWindow::unitTest(){
         });
     }
 
-    //test45;test46
+    //test45;test46;test50
     {
         rea::m_tests.insert("test45", [](){
             rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
@@ -642,6 +642,13 @@ void MainWindow::unitTest(){
             rea::in<double>(25, "test46")
                 ->asyncCall<QString>("test46")
                 ->asyncCall("testSuccess");
+        });
+
+        rea::m_tests.insert("test50", [](){
+            rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
+                assert(aInput->data() == 1.0);
+                aInput->out();
+            }, rea::Json("name", "test50_c", "external", "js"));
         });
     }
 
@@ -659,6 +666,7 @@ void MainWindow::unitTest(){
     rea::test("test39");
     rea::test("test43");
     rea::test("test45");
+    rea::test("test50");
 
     rea::pipeline::instance()->add<QString>([](rea::stream<QString>* aInput){
         QString dt = "data:image/png;base64, " + rea::QImage2Base64(QImage("F:/3M/微信图片_20200916112142.png"));

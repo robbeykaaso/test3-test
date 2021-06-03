@@ -549,7 +549,7 @@ function test45(){
 
 //#endregion
 
-//#region test46
+//#region test46;test47;test48;test49
 
 function test46(){
     return "test46"
@@ -590,6 +590,26 @@ function test49(){
 
 //#endregion
 
+//#region test50
+
+function test50_(){
+    pipelines().add(function(aInput){
+        aInput.setData(1).out()
+    }, {name: "test50"})
+    .next("test50_c")
+    .next("test50_qml")
+    .nextF(function(aInput){
+        console.assert(aInput.data() == 1)
+        aInput.outs("Pass: test50", "testSuccessJS")
+    })
+}
+
+function test50(){
+    pipelines().run("test50", 0)
+}
+
+//#endregion
+
 pipelines().add(function(aInput){
     test_pass++
     console.log("Success: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
@@ -611,7 +631,7 @@ test17_()
 test19_()
 test25_()
 test49_()
-
+test50_()
 
     pipelines().add(function(aInput){
         //js
@@ -633,7 +653,8 @@ test49_()
             [test23, 1], //test js asyncCall
 
             [test24, 1], //test pipe mixture: js.asyncCall.c++
-            [test49, 1]  //test custom js pipe
+            [test49, 1],  //test custom js pipe
+            [test50, 1]  //test js->js.future(c++)->js.future(qml)->js
         ]
         for (let i in test)
             test_sum += test[i][1]
