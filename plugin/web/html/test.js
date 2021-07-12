@@ -590,7 +590,7 @@ function test49(){
 
 //#endregion
 
-//#region test50
+//#region test50;test51
 
 function test50_(){
     pipelines().add(function(aInput){
@@ -606,6 +606,40 @@ function test50_(){
 
 function test50(){
     pipelines().run("test50", 0)
+}
+
+function test51(){
+    pipelines().add(function(aInput){
+        let dt = aInput.data()
+        console.assert(dt == 1.0)
+        aInput.setData(dt + 1).out()
+    }, {name: "test__51", before: "test_51", replace: true})
+
+    pipelines().add(function(aInput){
+        let dt = aInput.data()
+        console.assert(dt == 2.0)
+        aInput.setData(dt + 1).out()
+    }, {name: "test_51", before: "test51", replace: true})
+
+    pipelines().add(function(aInput){
+        let dt = aInput.data()
+        console.assert(dt == 3.0)
+        aInput.setData(dt + 1).out()
+    }, {name: "test51", replace: true})
+
+    pipelines().add(function(aInput){
+        let dt = aInput.data()
+        console.assert(dt == 4.0)
+        aInput.setData(dt + 1).out()
+    }, {name: "test51_", after: "test51", replace: true})
+
+    pipelines().add(function(aInput){
+        let dt = aInput.data()
+        console.assert(dt == 5.0)
+        aInput.outs("Pass: test51", "testSuccessJS")
+    }, {name: "test51__", after: "test51_", replace: true})
+
+    pipelines().run("test51", 1)
 }
 
 //#endregion
@@ -654,7 +688,8 @@ test50_()
 
             [test24, 1], //test pipe mixture: js.asyncCall.c++
             [test49, 1],  //test custom js pipe
-            [test50, 1]  //test js->js.future(c++)->js.future(qml)->js
+            [test50, 1],  //test js->js.future(c++)->js.future(qml)->js
+            [test51, 1] //test js aop and keep topo
         ]
         for (let i in test)
             test_sum += test[i][1]
@@ -721,6 +756,7 @@ test50_()
             [test21__()]: 0,
             //qml
             [test43__()]: 0
+
         }).out()
     })
     .next("unitTestQML")

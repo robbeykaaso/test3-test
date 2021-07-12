@@ -17,7 +17,7 @@ static rea::regPip<QQmlApplicationEngine*> test_qsg([](rea::stream<QQmlApplicati
         imgs.insert(pth, img);
 
         QJsonObject img_data;
-        img_data.insert(pth2, rea::QImage2Base64(QImage(pth2)));
+        img_data.insert(pth2, QString(rea::QImage2Base64(QImage(pth2))));
 
         auto cfg = rea::Json("width", img.width() ? img.width() : 600,
                              "height", img.height() ? img.height() : 600,
