@@ -5,5 +5,6 @@
         <file>test2.qml</file>
         <file>plugin/web/html/test.html</file>
         <file>plugin/web/html/test.js</file>
+        <file>Video.qml</file>
     </qresource>
 </RCC>

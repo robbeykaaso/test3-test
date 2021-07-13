@@ -27,7 +27,7 @@ project(REA_TEST)
 #add_definitions(-DEXPORTDLL)
 add_compile_definitions("GTEST_LINKED_AS_SHARED_LIBRARY=1")
 
-find_package(Qt5 COMPONENTS Widgets Core Quick SerialPort SerialBus WebEngineWidgets WebEngine REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Quick SerialPort SerialBus WebEngineWidgets WebEngine Multimedia REQUIRED)
 set(REA_DIR ${CMAKE_CURRENT_LIST_DIR}/../frm/cmake)
 find_package(REA)
 
@@ -43,6 +43,8 @@ set(my_Sources
     "test_qml.cpp"
     "test_qsg.cpp"
     "test_storage.cpp"
+    "videooutput.h"
+    "videooutput.cpp"
     )
 
 set(my_Libs
@@ -53,6 +55,7 @@ set(my_Libs
     Qt5::SerialBus
     Qt5::WebEngineWidgets
     Qt5::WebEngine
+    Qt5::Multimedia
     ${REA_LIBS}
     )
 
@@ -85,6 +88,12 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_CURRENT_LIST_DIR}/test.qml"
+    "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/.."
+    COMMENT "copying resource.")
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_CURRENT_LIST_DIR}/Video.qml"
     "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/.."
     COMMENT "copying resource.")
 

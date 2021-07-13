@@ -1114,6 +1114,13 @@ ApplicationWindow {
                     }, tag)
                 }
             }
+
+            MenuItem{
+                text: "videoOutput"
+                onClicked: {
+                    vdooutput.show()
+                }
+            }
         }
 
         DynamicQML{
@@ -1702,6 +1709,10 @@ ApplicationWindow {
                 buildDefaultTree(tmp, 'folder1')
             }
         }
+    }
+
+    Video{
+        id: vdooutput
     }
 
     TWindow{
