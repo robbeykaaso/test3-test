@@ -590,7 +590,7 @@ function test49(){
 
 //#endregion
 
-//#region test50;test51
+//#region test50;test51;test52
 
 function test50_(){
     pipelines().add(function(aInput){
@@ -642,6 +642,9 @@ function test51(){
     pipelines().run("test51", 1)
 }
 
+function test52(){
+    return "test52"
+}
 //#endregion
 
 pipelines().add(function(aInput){
@@ -737,6 +740,7 @@ test50_()
             [test26()]: 1, //test c++ aop and keep topo
             [test27()]: 1, //test c++ functor
             [test30()]: 1, //test c++ pipe parallel
+            [test52()]: 1, //test c++ pipe parallel2
 
             //qml
             [test28()]: 1, //test pipe qml

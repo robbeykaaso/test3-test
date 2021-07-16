@@ -629,7 +629,7 @@ void MainWindow::unitTest(){
         });
     }
 
-    //test45;test46;test50
+    //test45;test46;test50;test52
     {
         rea::m_tests.insert("test45", [](){
             rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
@@ -650,6 +650,43 @@ void MainWindow::unitTest(){
                 aInput->out();
             }, rea::Json("name", "test50_c", "external", "js"));
         });
+
+        rea::m_tests.insert("test52_", [](){
+            static int test52_cnt = 0;
+            rea::pipeline::instance()->add<QString>([](rea::stream<QString>* aInput){
+                QFile fl("F:/3M/config_.json");
+                if (fl.open(QFile::ReadOnly)){
+                    QJsonDocument doc = QJsonDocument::fromJson(fl.readAll());
+                    fl.close();
+                }
+                if (aInput->data() == "0")
+                    aInput->setData("2")->out();
+                else if (aInput->data() == "1")
+                    aInput->setData("3")->out();
+            }, rea::Json("name", "test52__",
+                         "thread", 22))
+            ->nextF<QString>([](rea::stream<QString>* aInput){
+                assert(aInput->data() == "2");
+                if (++test52_cnt % 2000 == 0){
+                    aInput->outs<QString>("Pass: test52", "testSuccess");
+                }
+            });
+            rea::pipeline::instance()->add<QString, rea::pipeParallel>(nullptr, rea::Json("name", "test52___",
+                                                                                          "delegate", "test52__"))
+                    ->nextF<QString>([](rea::stream<QString>* aInput){
+                assert(aInput->data() == "3");
+                if (++test52_cnt % 2000 == 0){
+                    aInput->outs<QString>("Pass: test52", "testSuccess");
+                }
+            }, "lala");
+        });
+
+        rea::m_tests.insert("test52", [](){
+            for (int i = 0; i < 1000; i++)
+                rea::pipeline::instance()->run<QString>("test52__", "0");
+            for (int i = 0; i < 1000; i++)
+                rea::pipeline::instance()->run<QString>("test52___", "1", "lala");
+        });
     }
 
     rea::test("test4");
@@ -667,6 +704,7 @@ void MainWindow::unitTest(){
     rea::test("test43");
     rea::test("test45");
     rea::test("test50");
+    rea::test("test52_");
 
     rea::pipeline::instance()->add<QString>([](rea::stream<QString>* aInput){
         QString dt = "data:image/png;base64, " + rea::QImage2Base64(QImage("F:/3M/微信图片_20200916112142.png"));
