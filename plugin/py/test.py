@@ -318,7 +318,7 @@ def test14():
         aInput.outs("Pass: test14")
     pipelines("c++").add(p1, {"name": "test14", "thread": 5, "external": "py"})
 
-    pipelines().input(24, "test14").asyncCall("test14").asyncCall("testSuccessPy")
+    pipelines().input(24, "test14").asyncCall("test14", True, "py", True).asyncCall("testSuccessPy")
 
 #test custom py pipe
 def test15():

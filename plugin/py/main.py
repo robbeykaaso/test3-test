@@ -1,11 +1,13 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget
+from server import normalServer
 import test
 
 def main():
 
     app = QApplication(sys.argv)
-    test.doTest(1)
+    server = normalServer()
+    #test.doTest(1)
 
     # w = QWidget()
     # w.resize(250, 150)

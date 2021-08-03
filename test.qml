@@ -266,7 +266,7 @@ ApplicationWindow {
 
             function test45(){
                 Pipeline.input(24, "test45")
-                .asyncCall("test45", false)
+                .asyncCall("test45", false, "qml", true)
                 .asyncCall("testSuccessQML", false)
             }
 

@@ -79,10 +79,10 @@ pipelines().find("js_QSGAttrUpdated_testbrd")
 
 async function onBtnShowImage()
 {
-    let dt = await pipelines().input({folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "test24").asyncCallS("js_selectFile")
+    let dt = await pipelines().input({folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "test24").asyncCall("js_selectFile", "js", true)
     if (!dt.data().length)
         return
-    dt = await pipelines().input(false, "test24", new scopeCache({path: dt.data()[0]})).asyncCallS("js_readImage")
+    dt = await pipelines().input(false, "test24", new scopeCache({path: dt.data()[0]})).asyncCall("js_readImage", "js", true)
     if (!dt.data())
         return
     let img = new Image(400, 300)
@@ -93,7 +93,7 @@ async function onBtnShowImage()
     }
     img.src = dt.scope().data("uri")
 
-    await pipelines().input(false, "test24", new scopeCache({path: "test.png", uri: dt.scope().data("uri")})).asyncCallS("js_writeImage")
+    await pipelines().input(false, "test24", new scopeCache({path: "test.png", uri: dt.scope().data("uri")})).asyncCall("js_writeImage", "js", true)
 }
 
 //#endregion
@@ -399,24 +399,23 @@ function test22(){
 }
 
 async function test23(){
-    await pipelines().input(0, "test23").asyncCallS(
-        [function(aInput){
+    let stm = await pipelines().input(0, "test23").asyncCallF(function(aInput){
             aInput.setData(aInput.data() + 1).out()
-        }],
-        [function(aInput){
-            console.assert(aInput.data() == 1)
-            aInput.outs("world")
-        }],
-        [function(aInput){
-            console.assert(aInput.data() == "world")
-            aInput.setData("Pass: test23").out()
-        }],
-        "testSuccessJS"
-    )
+        })
+    stm = await stm.asyncCallF(function(aInput){
+        console.assert(aInput.data() == 1)
+        aInput.outs("world")
+    })
+    stm = await stm.asyncCallF(function(aInput){
+        console.assert(aInput.data() == "world")
+        aInput.setData("Pass: test23").out()
+    })
+    await stm.asyncCall("testSuccessJS")
 }
 
 async function test24(){
-    await pipelines().input(24, "test24").asyncCallS("test24", "testSuccessJS")
+    let stm = await pipelines().input(24, "test24").asyncCall("test24", "js", true)
+    await stm.asyncCall("testSuccessJS")
 }
 
 //#endregion

@@ -413,7 +413,7 @@ void MainWindow::unitTest(){
     rea::m_tests.insert("test25_", [](){
         rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
             rea::in<double>(25, "test25")
-                ->asyncCall<QString>("test25", false)
+                ->asyncCall<QString>("test25", false, "c++", true)
                 ->asyncCall("testSuccess", false);
         }, rea::Json("name", "test25_", "thread", 4));
     });
@@ -640,7 +640,7 @@ void MainWindow::unitTest(){
 
         rea::m_tests.insert("test46", [](){
             rea::in<double>(25, "test46")
-                ->asyncCall<QString>("test46")
+                ->asyncCall<QString>("test46", true, "c++", true)
                 ->asyncCall("testSuccess");
         });
 
