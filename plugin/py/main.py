@@ -27,7 +27,6 @@ def clientOnline(aInput: stream):
 pipelines("server").add(clientOnline, {"name": "clientOnline", "external": "c++"})
 
 def main():
-
     app = QApplication(sys.argv)
 
     server = normalServer()
