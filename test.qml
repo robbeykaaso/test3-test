@@ -10,7 +10,6 @@ import "qml/gui/Basic"
 import "qml/gui/Pipe"
 import "qml/gui/Custom"
 import "qml/gui/Pipe/TreeNodeView"
-import Pipeline 1.0
 import QSGBoard 1.0
 
 ApplicationWindow {
@@ -30,27 +29,27 @@ ApplicationWindow {
 
             MenuItem{
                 text: "gTest"
-                onClicked: Pipeline.run("gTest", 0)
+                onClicked: Pipelines().run("gTest", 0)
             }
 
             MenuItem{
                 text: "breakpad"
-                onClicked: Pipeline.run("breakpad", 0)
+                onClicked: Pipelines().run("breakpad", 0)
             }
 
             MenuItem{
                 text: "test"
-                onClicked: Pipeline.run("openWebWindow", 0)
+                onClicked: Pipelines().run("openWebWindow", 0)
             }
             function test28(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data()["test28"] === "test28")
                     aInput.outs(aInput.data(), "test28_0")
                 }, {name: "test28_", external: "c++"})
             }
 
             function test31_(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 3)
                     aInput.out()
                 }, {name: "test31"})
@@ -61,11 +60,11 @@ ApplicationWindow {
             }
 
             function test31(){
-                Pipeline.run("test31", 3)
+                Pipelines().run("test31", 3)
             }
 
             function test32_(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 4)
                     aInput.outs(5, "test32_")
                 }, {name: "test32"})
@@ -76,30 +75,30 @@ ApplicationWindow {
             }
 
             function test32(){
-                Pipeline.run("test32", 4)
+                Pipelines().run("test32", 4)
             }
 
             function test33_(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 66)
                     aInput.outs("test33", "test33_0")
                 }, {name: "test33"})
                 .next("test33_0")
                 .next("testSuccessQML")
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     aInput.out()
                 }, {name: "test33_1"})
                 .next("test33__")
                 .next("testSuccessQML")
 
-                Pipeline.find("test33_0")
+                Pipelines().find("test33_0")
                 .nextF(function(aInput){
                     aInput.out()
                 }, "", {name: "test33__"})
                 .next("testSuccessQML")
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == "test33")
                     aInput.outs("Pass: test33", "testSuccessQML")
                     aInput.outs("Pass: test33_", "test33__")
@@ -107,15 +106,15 @@ ApplicationWindow {
             }
 
             function test33(){
-                Pipeline.run("test33", 66)
-                Pipeline.run("test33_1", "Pass: test33__")
+                Pipelines().run("test33", 66)
+                Pipelines().run("test33_1", "Pass: test33__")
             }
 
             function test34(){
-                Pipeline.find("test34_").removeNext("test34__")
-                Pipeline.find("test34__").removeNext("test_34")
+                Pipelines().find("test34_").removeNext("test34__")
+                Pipelines().find("test34__").removeNext("test_34")
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     aInput.scope().cache("hello", "world")
                     aInput.out()
                 }, {name: "test34"})
@@ -128,29 +127,29 @@ ApplicationWindow {
                     aInput.outs("Pass: test34", "testSuccessQML")
                 }, "", {name: "test_34"})
 
-                Pipeline.run("test34", 4)
+                Pipelines().run("test34", 4)
             }
 
             function test35(){
-                Pipeline.find("test35").removeNext("test_35")
+                Pipelines().find("test35").removeNext("test_35")
 
-                Pipeline.find("test35")
+                Pipelines().find("test35")
                 .nextF(function(aInput){
                     console.assert(aInput.data() == "world")
                     aInput.outs("Pass: test35", "testSuccessQML")
                 }, "", {name: "test_35"})
 
-                Pipeline.run("test35", "hello")
+                Pipelines().run("test35", "hello")
             }
 
             function test36(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 4)
                     console.assert(aInput.scope().data("hello") == "world")
                     aInput.setData(aInput.data() + 1).out()
                 }, {name: "test36_", external: "c++"})
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 5)
                     aInput.scope(true).cache("hello2", "world");
                     aInput.setData(aInput.data() + 1).out()
@@ -158,14 +157,14 @@ ApplicationWindow {
             }
 
             function test37(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == "hello")
                     aInput.setData("world").out()
                 }, {name: "test37", external: "c++"})
             }
 
             function test38_(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 66)
                     aInput.setData(77).out()
                 }, {name: "test38", type: "Partial"})
@@ -180,11 +179,11 @@ ApplicationWindow {
             }
 
             function test38(){
-                Pipeline.run("test38", 66, "test38")
+                Pipelines().run("test38", 66, "test38")
             }
 
             function test39_(){
-                Pipeline.find("test39")
+                Pipelines().find("test39")
                 .nextFB(function(aInput){
                     console.assert(aInput.data() == 77.0)
                     aInput.outs("Pass: test39", "testSuccessQML")
@@ -197,18 +196,18 @@ ApplicationWindow {
             }
 
             function test39(){
-                Pipeline.run("test39", 66, "test39")
+                Pipelines().run("test39", 66, "test39")
             }
 
             function test40(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 66)
                     aInput.setData(77).out()
                 }, {name: "test40", external: "c++", type: "Partial"})
             }
 
             function test41_(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 66.0)
                     aInput.out()
                 }, {name: "test41_0",
@@ -216,26 +215,26 @@ ApplicationWindow {
                     type: "Delegate"})
                 .next("testSuccessQML")
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 56.0)
                     aInput.setData("Pass: test41").out()
                 }, {name: "test41"})
             }
 
             function test41(){
-                Pipeline.run("test41_0", 66.0)
-                Pipeline.run("test41", 56.0)
+                Pipelines().run("test41_0", 66.0)
+                Pipelines().run("test41", 56.0)
             }
 
             function test42(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 56.0)
                     aInput.setData("Pass: test42").out()
                 }, {name: "test42", external: "c++"})
             }
 
             function test43(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 66.0)
                     aInput.out()
                 }, {name: "test43_0",
@@ -244,15 +243,15 @@ ApplicationWindow {
                 .nextB("testSuccess")
                 .next("testSuccessQML")
 
-                Pipeline.run("test43_0", 66)
+                Pipelines().run("test43_0", 66)
             }
 
             function test43__(){
-                Pipeline.run("test43", 56)
+                Pipelines().run("test43", 56)
             }
 
             function test44(){
-                Pipeline.input(0, "test44")
+                Pipelines().input(0, "test44")
                 .asyncCallF(function(aInput){
                     aInput.setData(aInput.data() + 1).out()
                 }).asyncCallF(function(aInput){
@@ -265,78 +264,78 @@ ApplicationWindow {
             }
 
             function test45(){
-                Pipeline.input(24, "test45")
+                Pipelines().input(24, "test45")
                 .asyncCall("test45", false, "qml", true)
                 .asyncCall("testSuccessQML", false)
             }
 
             function test46(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 25.0)
                     aInput.setData("Pass: test46").out()
                 }, {name: "test46", external: "c++"})
             }
 
             function test47(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     let dt = aInput.data()
                     console.assert(dt == 1.0)
                     aInput.setData(dt + 1).out()
                 }, {name: "test__47", before: "test_47", replace: true})
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     let dt = aInput.data()
                     console.assert(dt == 2.0)
                     aInput.setData(dt + 1).out()
                 }, {name: "test_47", before: "test47", replace: true})
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     let dt = aInput.data()
                     console.assert(dt == 3.0)
                     aInput.setData(dt + 1).out()
                 }, {name: "test47", replace: true})
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     let dt = aInput.data()
                     console.assert(dt == 4.0)
                     aInput.setData(dt + 1).out()
                 }, {name: "test47_", after: "test47", replace: true})
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     let dt = aInput.data()
                     console.assert(dt == 5.0)
                     aInput.outs("Pass: test47", "testSuccessQML")
                 }, {name: "test47__", after: "test47_", replace: true})
 
-                Pipeline.run("test47", 1)
+                Pipelines().run("test47", 1)
             }
 
             function test48_(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.scope().data("flag") == "test48")
                     aInput.outs("Pass: test48", "testSuccessQML")
                 }, {name: "test48", type: "CustomQML"})
             }
 
             function test48(){
-                Pipeline.run("test48", 0)
+                Pipelines().run("test48", 0)
             }
 
             function test50(){
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     console.assert(aInput.data() == 1.0)
                     aInput.out()
                 }, {name: "test50_qml", external: "js"})
             }
 
             Component.onCompleted: {
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     test_pass++
                     console.log("Success: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
                     aInput.out()
                 }, {name: "testSuccessQML"})
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     test_pass--
                     console.log("Fail: " + aInput.data() + "(" + test_pass + "/" + test_sum + ")")
                     aInput.out()
@@ -374,7 +373,7 @@ ApplicationWindow {
                 test48_()
                 test50()
 
-                Pipeline.add(function(aInput){
+                Pipelines().add(function(aInput){
                     var dt = aInput.data()
                     for (var i in dt)
                         test_sum += dt[i]
@@ -472,8 +471,8 @@ ApplicationWindow {
                     text: "model"
                     shortcut: "Ctrl+S"
                     onTriggered: {
-                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
-                        //Pipeline.run("testQSGModel", view_cfg)
+                        Pipelines().run("_setParam", qsgshow.gui, "testQSGModel")
+                        //Pipelines().run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -482,8 +481,8 @@ ApplicationWindow {
                     shortcut: "Ctrl+F"
                     onTriggered: {
                         view_cfg["face"] = 100 - view_cfg["face"]
-                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
-                       // Pipeline.run("testQSGModel", view_cfg)
+                        Pipelines().run("_setParam", qsgshow.gui, "testQSGModel")
+                       // Pipelines().run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -492,8 +491,8 @@ ApplicationWindow {
                     shortcut: "Ctrl+A"
                     onTriggered: {
                         view_cfg["arrow"]["visible"] = !view_cfg["arrow"]["visible"]
-                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
-                        //Pipeline.run("testQSGModel", view_cfg)
+                        Pipelines().run("_setParam", qsgshow.gui, "testQSGModel")
+                        //Pipelines().run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
@@ -502,27 +501,27 @@ ApplicationWindow {
                     shortcut: "Ctrl+T"
                     onTriggered: {
                         view_cfg["text"]["visible"] = !view_cfg["text"]["visible"]
-                        Pipeline.run("_setParam", qsgshow.gui, "testQSGModel")
-                        //Pipeline.run("testQSGModel", view_cfg)
+                        Pipelines().run("_setParam", qsgshow.gui, "testQSGModel")
+                        //Pipelines().run("testQSGModel", view_cfg)
                     }
                 }
                 Action {
                     text: "fps"
                     checkable: true
                     onTriggered: {
-                        Pipeline.run("testFPS", {})
+                        Pipelines().run("testFPS", {})
                     }
                 }
                 Component.onCompleted: {
-                    Pipeline.add(function(aInput){
-                        var pths = Pipeline.input({folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, aInput.tag()).asyncCall("_selectFile").data()
+                    Pipelines().add(function(aInput){
+                        var pths = Pipelines().input({folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, aInput.tag()).asyncCall("_selectFile").data()
                         if (pths.length)
                             aInput.setData(pths[0]).out()
                         else
                             aInput.setData("").out()
                     }, {name: "selectQSGImage"})
 
-                    Pipeline.find("_setParam").nextF(function(aInput){
+                    Pipelines().find("_setParam").nextF(function(aInput){
                         var dt = aInput.data()
                         if (dt["image1"]){
                             gui["content"]["image1"]["value"] = dt["image1"]
@@ -545,7 +544,7 @@ ApplicationWindow {
                     text: "wholeArrowVisible"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["arrow", "visible"], val: checked}], "wholeArrowVisible")
+                        Pipelines().run("qml_updateQSGAttr_testbrd", [{key: ["arrow", "visible"], val: checked}], "wholeArrowVisible")
                     }
                 }
                 MenuItem{
@@ -553,7 +552,7 @@ ApplicationWindow {
                     text: "wholeArrowPole"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["arrow", "pole"], val: checked}], "wholeArrowPole")
+                        Pipelines().run("qml_updateQSGAttr_testbrd", [{key: ["arrow", "pole"], val: checked}], "wholeArrowPole")
                     }
                 }
                 MenuItem{
@@ -561,7 +560,7 @@ ApplicationWindow {
                     text: "wholeFaceOpacity"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["face"], val: checked ? 200 : 0}], "wholeFaceOpacity")
+                        Pipelines().run("qml_updateQSGAttr_testbrd", [{key: ["face"], val: checked ? 200 : 0}], "wholeFaceOpacity")
                     }
                 }
                 MenuItem{
@@ -569,7 +568,7 @@ ApplicationWindow {
                     text: "wholeTextVisible"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["text", "visible"], val: checked}], "wholeTextVisible")
+                        Pipelines().run("qml_updateQSGAttr_testbrd", [{key: ["text", "visible"], val: checked}], "wholeTextVisible")
                     }
                 }
                 MenuItem{
@@ -577,7 +576,7 @@ ApplicationWindow {
                     text: "wholeColor"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["color"], val: checked ? "yellow" : "green"}], "wholeColor")
+                        Pipelines().run("qml_updateQSGAttr_testbrd", [{key: ["color"], val: checked ? "yellow" : "green"}], "wholeColor")
                     }
                 }
 
@@ -586,7 +585,7 @@ ApplicationWindow {
                     text: "wholeObjects"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("qml_updateQSGAttr_testbrd", [{key: ["objects"], type: checked ? "add" : "del", tar: "shp_3", val: {
+                        Pipelines().run("qml_updateQSGAttr_testbrd", [{key: ["objects"], type: checked ? "add" : "del", tar: "shp_3", val: {
                                                                                                          type: "poly",
                                                                                                          points: [[500, 300, 700, 300, 700, 500, 500, 300]],
                                                                                                          color: "pink",
@@ -597,7 +596,7 @@ ApplicationWindow {
                 }
 
                 Component.onCompleted: {
-                    Pipeline.find("qml_QSGAttrUpdated_testbrd")
+                    Pipelines().find("qml_QSGAttrUpdated_testbrd")
                     .nextF(function(aInput){
                         test_sum++
                         aInput.setData("Pass: qml_updateQSGAttr").out()
@@ -613,7 +612,7 @@ ApplicationWindow {
                     text: "polyArrowVisible"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["arrow", "visible"], val: checked}], "polyArrowVisible")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["arrow", "visible"], val: checked}], "polyArrowVisible")
                     }
                 }
                 MenuItem{
@@ -621,7 +620,7 @@ ApplicationWindow {
                     text: "polyArrowPole"
                     onClicked:{
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["arrow", "pole"], val: checked}], "polyArrowPole")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["arrow", "pole"], val: checked}], "polyArrowPole")
                     }
                 }
                 MenuItem{
@@ -629,7 +628,7 @@ ApplicationWindow {
                     text: "polyFaceOpacity"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["face"], val: checked ? 200 : 0}], "polyFaceOpacity")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["face"], val: checked ? 200 : 0}], "polyFaceOpacity")
                     }
                 }
                 MenuItem{
@@ -637,7 +636,7 @@ ApplicationWindow {
                     text: "polyTextVisible"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["text", "visible"], val: checked}], "polyTextVisible")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["text", "visible"], val: checked}], "polyTextVisible")
                     }
                 }
                 MenuItem{
@@ -645,7 +644,7 @@ ApplicationWindow {
                     text: "polyColor"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["color"], val: checked ? "yellow" : "green"}], "polyColor")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["color"], val: checked ? "yellow" : "green"}], "polyColor")
                     }
                 }
                 MenuItem{
@@ -653,7 +652,7 @@ ApplicationWindow {
                     text: "polyCaption"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["caption"], val: checked ? "poly_new" : "poly"}], "polyCaption")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["caption"], val: checked ? "poly_new" : "poly"}], "polyCaption")
                     }
                 }
                 MenuItem{
@@ -661,7 +660,7 @@ ApplicationWindow {
                     text: "polyWidth"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["width"], val: checked ? 0 : 10}], "polyWidth")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["width"], val: checked ? 0 : 10}], "polyWidth")
                     }
                 }
                 MenuItem{
@@ -669,7 +668,7 @@ ApplicationWindow {
                     text: "polyPoints"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["points"], val: checked ? [[50, 50, 200, 50, 200, 200, 50, 200, 50, 50], [80, 70, 120, 100, 120, 70, 80, 70]] : [[50, 50, 200, 200, 200, 50, 50, 50]]}], "polyPoints")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["points"], val: checked ? [[50, 50, 200, 50, 200, 200, 50, 200, 50, 50], [80, 70, 120, 100, 120, 70, 80, 70]] : [[50, 50, 200, 200, 200, 50, 50, 50]]}], "polyPoints")
                     }
                 }
                 MenuItem{
@@ -677,7 +676,7 @@ ApplicationWindow {
                     text: "polyStyle"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["style"], val: checked ? "dash" : "solid"}], "polyStyle")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["style"], val: checked ? "dash" : "solid"}], "polyStyle")
                     }
                 }
                 MenuItem{
@@ -685,7 +684,7 @@ ApplicationWindow {
                     text: "polyAngle"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["angle"], val: checked ? 45 : 0}], "polyAngle")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_0", key: ["angle"], val: checked ? 45 : 0}], "polyAngle")
                     }
                 }
                 MenuItem{
@@ -693,7 +692,7 @@ ApplicationWindow {
                     text: "imageAngle"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["angle"], val: checked ? 45 : 0}], "imageAngle")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["angle"], val: checked ? 45 : 0}], "imageAngle")
                     }
                 }
                 MenuItem{
@@ -701,7 +700,7 @@ ApplicationWindow {
                     text: "ellipseAngle"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["angle"], val: checked ? 90 : 20}], "ellipseAngle")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["angle"], val: checked ? 90 : 20}], "ellipseAngle")
                     }
                 }
                 MenuItem{
@@ -709,7 +708,7 @@ ApplicationWindow {
                     text: "ellipseCenter"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["center"], val: checked ? [600, 400] : [400, 400]}], "ellipseCenter")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["center"], val: checked ? [600, 400] : [400, 400]}], "ellipseCenter")
                     }
                 }
                 MenuItem{
@@ -717,7 +716,7 @@ ApplicationWindow {
                     text: "ellipseRadius"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["radius"], val: checked ? [200, 400] : [300, 200]}], "ellipseRadius")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["radius"], val: checked ? [200, 400] : [300, 200]}], "ellipseRadius")
                     }
                 }
                 MenuItem{
@@ -725,7 +724,7 @@ ApplicationWindow {
                     text: "ellipseCCW"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["ccw"], val: checked}], "ellipseCCW")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "shp_1", key: ["ccw"], val: checked}], "ellipseCCW")
                     }
                 }
                 MenuItem{
@@ -733,7 +732,7 @@ ApplicationWindow {
                     text: "imagePath"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["path"], val: checked ? "F:/3M/B4DT/DF Mark/V1-1.bmp" : "F:/3M/B4DT/DF Mark/V1-2.bmp"}], "imagePath")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["path"], val: checked ? "F:/3M/B4DT/DF Mark/V1-1.bmp" : "F:/3M/B4DT/DF Mark/V1-2.bmp"}], "imagePath")
                     }
                 }
                 MenuItem{
@@ -741,7 +740,7 @@ ApplicationWindow {
                     text: "imageRange"
                     onClicked: {
                         checked != checked
-                        Pipeline.run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["range"], val: checked ? [0, 0, 600, 800] : [0, 0, 400, 300]}], "imageRange")
+                        Pipelines().run("updateQSGAttr_testbrd", [{obj: "img_2", key: ["range"], val: checked ? [0, 0, 600, 800] : [0, 0, 400, 300]}], "imageRange")
                     }
                 }
             }
@@ -754,18 +753,18 @@ ApplicationWindow {
                 MenuItem{
                     text: "addLogRecord"
                     onClicked:{
-                        Pipeline.run("addLogRecord", {type: "train", level: "info", msg: "train_info"})
-                        Pipeline.run("addLogRecord", {type: "train", level: "warning", msg: "train_warning"})
-                        Pipeline.run("addLogRecord", {type: "train", level: "error", msg: "train_error"})
-                        Pipeline.run("addLogRecord", {type: "system", level: "info", msg: "system_info"})
-                        Pipeline.run("addLogRecord", {type: "system", level: "warning", msg: "system_warning"})
-                        Pipeline.run("addLogRecord", {type: "system", level: "error", msg: "system_error"})
+                        Pipelines().run("addLogRecord", {type: "train", level: "info", msg: "train_info"})
+                        Pipelines().run("addLogRecord", {type: "train", level: "warning", msg: "train_warning"})
+                        Pipelines().run("addLogRecord", {type: "train", level: "error", msg: "train_error"})
+                        Pipelines().run("addLogRecord", {type: "system", level: "info", msg: "system_info"})
+                        Pipelines().run("addLogRecord", {type: "system", level: "warning", msg: "system_warning"})
+                        Pipelines().run("addLogRecord", {type: "system", level: "error", msg: "system_error"})
                     }
                 }
                 MenuItem{
                     text: "showLogPanel"
                     onClicked:{
-                        Pipeline.run("showLogPanel", {})
+                        Pipelines().run("showLogPanel", {})
                     }
                 }
             }
@@ -774,7 +773,7 @@ ApplicationWindow {
                 MenuItem{
                     text: "updateListView"
                     onClicked: {
-                        Pipeline.run("_updateListView", {title: ["cat", "dog", "sheep", "rat"],
+                        Pipelines().run("_updateListView", {title: ["cat", "dog", "sheep", "rat"],
                                                           selects: [1, 3, 5],
                                                           data: [
                                                             {entry: [4, 6, 2, 3]},
@@ -789,7 +788,7 @@ ApplicationWindow {
                 MenuItem{
                     text: "modifyListView"
                     onClicked: {
-                        Pipeline.run("_updateListView", {index: [2, 4, 5],
+                        Pipelines().run("_updateListView", {index: [2, 4, 5],
                                                           fontclr: "red",
                                                           data: [
                                                             {entry: [1, 3, 2, 3]},
@@ -801,7 +800,7 @@ ApplicationWindow {
                 MenuItem{
                     text: "updatePageListView"
                     onClicked: {
-                        Pipeline.run("pageList_updateListView", {title: ["idx", "dog", "sheep", "rat"],
+                        Pipelines().run("pageList_updateListView", {title: ["idx", "dog", "sheep", "rat"],
                                                           selects: [1, 3, 11],
                                                           entrycount: 3,
                                                           pageindex: 2,
@@ -823,11 +822,11 @@ ApplicationWindow {
                 }
 
                 Component.onCompleted: {
-                    Pipeline.find("_listViewSelected")
+                    Pipelines().find("_listViewSelected")
                     .nextF(function(aInput){
                         console.log(aInput.data())
                     }, "manual")
-                    Pipeline.find("pageList_listViewSelected")
+                    Pipelines().find("pageList_listViewSelected")
                     .nextF(function(aInput){
                         console.log(aInput.data())
                     }, "manual")
@@ -907,16 +906,16 @@ ApplicationWindow {
                         }
                         for (var i in cnt)
                             cnt[i]["value"] = val[i]
-                        Pipeline.run("_setParam", {
+                        Pipelines().run("_setParam", {
                                                 title: "set Param",
                                                 content: cnt
                                             }, "manual")
                     }
                     Component.onCompleted: {
-                        Pipeline.add(function(aInput){
+                        Pipelines().add(function(aInput){
                             aInput.setData("XXXParam").out()
                         }, {name: "getXXXParam"})
-                        Pipeline.find("_setParam").nextF(function(aInput){
+                        Pipelines().find("_setParam").nextF(function(aInput){
                             var dt = aInput.data()
                             for (var i in val)
                                 if (dt[i] !== undefined)
@@ -926,7 +925,7 @@ ApplicationWindow {
                 }
                 MenuItem{
                     text: "webwidget"
-                    onClicked: Pipeline.run("openWebWindow", 0)
+                    onClicked: Pipelines().run("openWebWindow", 0)
                 }
                 MenuItem{
                     text: "webqml"
@@ -942,23 +941,23 @@ ApplicationWindow {
                     MenuItem{
                         text: "files"
                         onClicked: {
-                            Pipeline.run("_selectFile", {folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "manual", {hello: "world"})
+                            Pipelines().run("_selectFile", {folder: false, filter: ["Image files (*.jpg *.png *.jpeg *.bmp)"]}, "manual", {hello: "world"})
                         }
                     }
                     MenuItem{
                         text: "directory"
                         onClicked: {
-                            Pipeline.run("_selectFile", {folder: true}, "manual2", {hello: "world"})
+                            Pipelines().run("_selectFile", {folder: true}, "manual2", {hello: "world"})
                         }
                     }
                     Component.onCompleted: {
-                        Pipeline.find("_selectFile")
+                        Pipelines().find("_selectFile")
                         .nextF(function(aInput){
                             console.assert(aInput.scope().data("hello") === "world")
                             test_sum++
                             aInput.outs("Pass: _selectFile", "testSuccessQML")
                         }, "manual")
-                        Pipeline.find("_selectFile")
+                        Pipelines().find("_selectFile")
                         .nextF(function(aInput){
                             console.assert(aInput.scope().data("hello") === "world")
                             test_sum++
@@ -970,9 +969,9 @@ ApplicationWindow {
                 MenuItem{
                     text: "color"
                     onClicked:
-                        Pipeline.run("_selectColor", {}, "manual2", {hello: "world"})
+                        Pipelines().run("_selectColor", {}, "manual2", {hello: "world"})
                     Component.onCompleted: {
-                        Pipeline.find("_selectColor")
+                        Pipelines().find("_selectColor")
                         .nextF(function(aInput){
                             console.assert(aInput.scope().data("hello") === "world")
                             test_sum++
@@ -984,9 +983,9 @@ ApplicationWindow {
                 MenuItem{
                     text: "MsgDialog"
                     onClicked:
-                        Pipeline.run("popMessage", {title: "hello4", text: "world"}, "manual", {hello: "world"})
+                        Pipelines().run("popMessage", {title: "hello4", text: "world"}, "manual", {hello: "world"})
                     Component.onCompleted: {
-                        Pipeline.find("messagePoped")
+                        Pipelines().find("messagePoped")
                         .nextF(function(aInput){
                             console.assert(aInput.scope().data("hello") === "world")
                             test_sum++
@@ -1032,24 +1031,24 @@ ApplicationWindow {
             MenuItem{
                 text: "status"
                 onClicked:
-                    Pipeline.run("_updateStatus", ["hello", "world"])
+                    Pipelines().run("_updateStatus", ["hello", "world"])
             }
             Menu{
                 title: "navigation"
                 MenuItem{
                     text: "2"
-                    onClicked: Pipeline.run("_updateNavigation", ["first layer", "second layer"], "manual")
+                    onClicked: Pipelines().run("_updateNavigation", ["first layer", "second layer"], "manual")
                 }
                 MenuItem{
                     text: "3"
-                    onClicked: Pipeline.run("_updateNavigation", ["first layer", "second layer", "third layer"], "manual")
+                    onClicked: Pipelines().run("_updateNavigation", ["first layer", "second layer", "third layer"], "manual")
                 }
                 MenuItem{
                     text: "4"
-                    onClicked: Pipeline.run("_updateNavigation", ["first layer", "second layer", "third layer", "forth layer"], "manual")
+                    onClicked: Pipelines().run("_updateNavigation", ["first layer", "second layer", "third layer", "forth layer"], "manual")
                 }
                 Component.onCompleted: {
-                    Pipeline.find("_updateNavigation")
+                    Pipelines().find("_updateNavigation")
                     .nextF(function(aInput){
                         test_sum++
                         aInput.outs("Pass: _updateNavigation", "testSuccessQML")
@@ -1059,7 +1058,7 @@ ApplicationWindow {
             MenuItem{
                 text: "search"
                 onClicked:
-                    Pipeline.run("_Searched", "", "manual")
+                    Pipelines().run("_Searched", "", "manual")
             }
 
             MenuItem{
@@ -1089,26 +1088,26 @@ ApplicationWindow {
                 onClicked: {
                     if (cnt % 10 == 0){
                         hope = 0.0
-                        Pipeline.run("updateProgress", {title: "demo: ", sum: 10}, tag)
+                        Pipelines().run("updateProgress", {title: "demo: ", sum: 10}, tag)
                         hope = 0.1
-                        Pipeline.run("updateProgress", {}, tag)
+                        Pipelines().run("updateProgress", {}, tag)
                         ++cnt
                     }else if (cnt % 10 == 1){
                         hope = 0.2
-                        Pipeline.run("updateProgress", {}, tag)
+                        Pipelines().run("updateProgress", {}, tag)
                         ++cnt
                     }else if (cnt % 10 == 2){
                         hope = 0.9
-                        Pipeline.run("updateProgress", {step: 7}, tag)
+                        Pipelines().run("updateProgress", {step: 7}, tag)
                         cnt += 7
                     }else if (cnt % 10 == 9){
                         hope = 1.0
-                        Pipeline.run("updateProgress", {}, tag)
+                        Pipelines().run("updateProgress", {}, tag)
                         ++cnt
                     }
                 }
                 Component.onCompleted: {
-                    Pipeline.find("updateProgress")
+                    Pipelines().find("updateProgress")
                     .nextF(function(aInput){
                         console.assert(aInput.data() === hope)
                     }, tag)
@@ -1179,7 +1178,7 @@ ApplicationWindow {
                         }
                     }
                     Component.onCompleted: {
-                        Pipeline.find("_Searched")
+                        Pipelines().find("_Searched")
                         .nextF(function(aInput){
                             var dt = aInput.data()
                             console.assert(dt === "search")
@@ -1337,7 +1336,7 @@ ApplicationWindow {
             {
                 cap: "6",
                 func: function(){
-                    Pipeline.run(gridder_cld.name + "_updateViewCount", {sum: 6})
+                    Pipelines().run(gridder_cld.name + "_updateViewCount", {sum: 6})
                 }
             },
             {
@@ -1355,7 +1354,7 @@ ApplicationWindow {
             {
                 cap: "5x5",
                 func: function(){
-                    Pipeline.run(gridder_cld.name + "_updateViewCount", {layout: [5, 5]})
+                    Pipelines().run(gridder_cld.name + "_updateViewCount", {layout: [5, 5]})
                 }
             },
             {
@@ -1365,7 +1364,7 @@ ApplicationWindow {
                         gridder_cld.invisible_tag = {}
                     else
                         gridder_cld.invisible_tag = {"3": true, "4": true, "6": true}
-                    Pipeline.run(gridder_cld.name + "_updateViewCount", {invisible: gridder_cld.invisible_tag})
+                    Pipelines().run(gridder_cld.name + "_updateViewCount", {invisible: gridder_cld.invisible_tag})
                 }
             },
 
@@ -1477,7 +1476,7 @@ ApplicationWindow {
             {
                 cap: "5x4",
                 func: function(){
-                    Pipeline.run("_updateMatrix", {rowcap: "hello2",
+                    Pipelines().run("_updateMatrix", {rowcap: "hello2",
                                                     colcap: "world2",
                                                     content: [[1, 2, 3, 4],
                                                               [5, 6, 7, 8],
@@ -1489,7 +1488,7 @@ ApplicationWindow {
 
         ]
         Component.onCompleted: {
-            Pipeline.find("_matrixSelected")
+            Pipelines().find("_matrixSelected")
             .nextF(function(aInput){
                 console.log("_matrixSelected: " + aInput.data())
             }, "manual")
@@ -1532,17 +1531,17 @@ ApplicationWindow {
         }
         footbuttons: [
             {cap: "modify", func: function(){
-                Pipeline.run("modifyTreeViewGUI", {key: ["hi2", "1", "no", "1"], val: true}, "modifyTreeView")}},
+                Pipelines().run("modifyTreeViewGUI", {key: ["hi2", "1", "no", "1"], val: true}, "modifyTreeView")}},
             {cap: "add", func: function(){
-                Pipeline.run("modifyTreeViewGUI", {key: ["hi2", "1", "no", "2"], type: "add", val: 14}, "modifyTreeView")}},
+                Pipelines().run("modifyTreeViewGUI", {key: ["hi2", "1", "no", "2"], type: "add", val: 14}, "modifyTreeView")}},
             {cap: "delete", func: function(){
-                Pipeline.run("modifyTreeViewGUI", {key: ["hi"], type: "del"}, "modifyTreeView")}},
+                Pipelines().run("modifyTreeViewGUI", {key: ["hi"], type: "del"}, "modifyTreeView")}},
             {cap: "load", func: function(){
-                Pipeline.run("loadTreeView", {data: sample}, "testTreeView")}},
+                Pipelines().run("loadTreeView", {data: sample}, "testTreeView")}},
             {cap: "save", func: function(){
-                Pipeline.run("saveTreeView", {}, "testTreeView")}},
+                Pipelines().run("saveTreeView", {}, "testTreeView")}},
             {cap: "style", func: function(){
-                Pipeline.run("saveTreeView", {}, "styleTreeView")}}
+                Pipelines().run("saveTreeView", {}, "styleTreeView")}}
             ]
 
         function sameObject(aTarget, aRef){
@@ -1574,7 +1573,7 @@ ApplicationWindow {
             {
                 cap: "test",
                 func: function(){
-                    Pipeline.run("_updateLineChart", [20, 30, 100, 125, 30, 10, 12, 30, 50])
+                    Pipelines().run("_updateLineChart", [20, 30, 100, 125, 30, 10, 12, 30, 50])
                 }
             }
         ]
@@ -1590,7 +1589,7 @@ ApplicationWindow {
             {
                 cap: "test",
                 func: function(){
-                    Pipeline.run("_updateHistogramGUI", {histogram: [40, 20, 15, 25, 14, 16, 13, 30]})
+                    Pipelines().run("_updateHistogramGUI", {histogram: [40, 20, 15, 25, 14, 16, 13, 30]})
                 }
             }
 
@@ -1626,7 +1625,7 @@ ApplicationWindow {
             webChannel: WebChannel{
                 id: webview_chn
                 /*Component.onCompleted: {
-                    var stm = Pipeline.asyncCall("pipelineJSObject", 0)
+                    var stm = Pipelines().asyncCall("pipelineJSObject", 0)
                     webview_chn.registerObject("Pipelinec++", stm.data())
                     //webview_chn.registerObject("Pipeline", stm.scope().data("pipeline"))
                     webview.url = "file:/html/test.html"
@@ -1750,7 +1749,7 @@ ApplicationWindow {
                     updateInterval()
                 }
                 Component.onCompleted: {
-                    Pipeline.add(function(aInput){
+                    Pipelines().add(function(aInput){
                         var dt = aInput.data()
                         intervals = []
                         histogramdata = []
@@ -1784,7 +1783,7 @@ ApplicationWindow {
             {
                 cap: "test",
                 func: function(){
-                    Pipeline.run("_updateTHistogramGUI", {histogram: {
+                    Pipelines().run("_updateTHistogramGUI", {histogram: {
                                       5: [10, 20, 15, 30, 25],
                                       10: [10, 20, 15, 30, 25, 20, 21, 23, 42, 12],
                                       20: [10, 20, 15, 30, 25, 20, 21, 23, 42, 12, 12, 10, 20, 42, 30, 15, 25, 20, 21, 23]
@@ -1811,9 +1810,9 @@ ApplicationWindow {
 
     }
     Component.onCompleted: {
-        Pipeline.add(function(aInput){
+        Pipelines().add(function(aInput){
             var tg = aInput.tag()
-            Pipeline.find("_fileSelected").nextF(function(aInput){
+            Pipelines().find("_fileSelected").nextF(function(aInput){
                 aInput.out(tg)
             }, "manual", {name: "js_fileSelected",
                     type: "Partial",
@@ -1829,6 +1828,6 @@ ApplicationWindow {
     }
 
     Component.onDestruction:{
-        Pipeline.run("unloadMain", 0)
+        Pipelines().run("unloadMain", 0)
     }
 }

@@ -6,8 +6,8 @@
 static rea::regPip<QQmlApplicationEngine*> reg_js_linker([](rea::stream<QQmlApplicationEngine*>* aInput){
     qmlRegisterType<rea::environmentJS>("EnvJS", 1, 0, "EnvJS");
     //ref from: https://stackoverflow.com/questions/25403363/how-to-implement-a-singleton-provider-for-qmlregistersingletontype
-    rea::pipeline::instance()->updateOutsideRanges({"js"});
-    rea::pipeline::instance("qml")->updateOutsideRanges({"qmljs"});
+    auto m = rea::getDefaultPipelineName(), m_qml = rea::getDefaultQMLPipelineName();
+    rea::connectPipelines({m, "js", m_qml, "qmljs", m, m_qml, m_qml, m});
     rea::pipeline::instance("js");
     rea::pipeline::instance("qmljs");
     aInput->out();

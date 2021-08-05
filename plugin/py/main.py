@@ -1,8 +1,10 @@
 import sys
+from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget
 from reapython.server import normalServer
-from reapython.rea import pipelines, pipeline, stream
+from reapython.rea import pipelines, pipeline, scopeCache, stream
 from reapython.reaRemote import connectRemote, pipelineRemote
+from PyQt5.QtQml import QQmlApplicationEngine
 #import test
 
 pipelines().add(lambda aInput:
@@ -28,12 +30,16 @@ pipelines("server").add(clientOnline, {"name": "clientOnline", "external": "c++"
 
 def main():
     app = QApplication(sys.argv)
+    
+    engine = QQmlApplicationEngine()
+    engine.load("main.qml")
+    # server = normalServer()
+    # def writeRemote(aInput: stream):
+    #     server.writeSocket(aInput.scope().data("socket"), aInput.data())
+    # connectRemote("server", "c++", writeRemote, False, "c++_server")
+    # connectRemote("server", "qml", writeRemote, False, "qml_server")
 
-    server = normalServer()
-    def writeRemote(aInput: stream):
-        server.writeSocket(aInput.scope().data("socket"), aInput.data())
-    connectRemote("server", "c++", writeRemote, False, "c++_server")
-    connectRemote("server", "qml", writeRemote, False, "qml_server")
+    #test.stgTest()
     #test.doTest(1)
 
     # w = QWidget()

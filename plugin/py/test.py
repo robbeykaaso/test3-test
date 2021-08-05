@@ -1,7 +1,8 @@
-from reapython.rea import pipelines, pipeline, stream, pipe
+from reapython.rea import pipelines, pipeline, stream, pipe, scopeCache
 from PyQt5.QtCore import QEvent
 from time import sleep
 import threading
+from reapython.storage import fsStorage
 
 #test py different type instance
 def test0():
@@ -379,3 +380,10 @@ def doTest(aSum: int):
     test8_com = aSum
     for i in range(aSum):
         internalTest(aSum)
+
+def stgTest():
+    stg = fsStorage()
+    stg.initialize()
+    stm = pipelines().input(False, "", scopeCache({"path": "F:/3M/project.json"}), True).asyncCall("readJsonObject")
+    stm.scope().cache("path", "F:/3M/gg/project-1.json")
+    stm.asyncCall("writeJsonObject")
