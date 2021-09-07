@@ -5,7 +5,7 @@ from reapython.server import normalServer
 from reapython.rea import pipelines, pipeline, scopeCache, stream
 from reapython.reaRemote import connectRemote, pipelineRemote
 from PyQt5.QtQml import QQmlApplicationEngine
-#import test
+import test
 
 pipelines().add(lambda aInput:
     aInput.setData(pipeline("server")).out()
@@ -31,8 +31,8 @@ pipelines("server").add(clientOnline, {"name": "clientOnline", "external": "c++"
 def main():
     app = QApplication(sys.argv)
     
-    engine = QQmlApplicationEngine()
-    engine.load("main.qml")
+    #engine = QQmlApplicationEngine()
+    #engine.load("main.qml")
     # server = normalServer()
     # def writeRemote(aInput: stream):
     #     server.writeSocket(aInput.scope().data("socket"), aInput.data())
@@ -40,7 +40,7 @@ def main():
     # connectRemote("server", "qml", writeRemote, False, "qml_server")
 
     #test.stgTest()
-    #test.doTest(1)
+    test.doTest(1)
 
     # w = QWidget()
     # w.resize(250, 150)

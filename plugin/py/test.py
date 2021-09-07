@@ -15,13 +15,23 @@ def test0():
     pipelines().run("test", "hello")
     pipelines().run("test", False)
 
-def testResult(aInput: stream):
-    print(aInput.data())
+success_cnt = 0
+def testSuccessResult(aInput: stream):
+    global success_cnt
+    success_cnt += 1
+    print(aInput.data() + ": " + str(success_cnt)) #16
     aInput.out()
 
-pipelines().add(testResult, {"name": "testSuccessPy"})
+fail_cnt = 0
+def testFailResult(aInput: stream):
+    global fail_cnt
+    fail_cnt += 1
+    print(aInput.data() + ": " + str(fail_cnt)) #0
+    aInput.out()
 
-pipelines().add(testResult, {"name": "testFailPy"})
+pipelines().add(testSuccessResult, {"name": "testSuccessPy"})
+
+pipelines().add(testFailResult, {"name": "testFailPy"})
 
 #test py anonymous next
 def test1():

@@ -635,7 +635,7 @@ void MainWindow::unitTest(){
             rea::pipeline::instance()->add<double>([](rea::stream<double>* aInput){
                 assert(aInput->data() == 24.0);
                 aInput->outs<QString>("Pass: test45");
-            }, rea::Json("name", "test45", "thread", 6, "external", "qml"));
+            }, rea::Json("name", "test45", "external", "qml"));
         });
 
         rea::m_tests.insert("test46", [](){
