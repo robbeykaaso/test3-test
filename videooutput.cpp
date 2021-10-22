@@ -8,7 +8,7 @@ void FrameProvider::onNewVideoContentReceived(const QVideoFrame &frame)
         m_surface->present(frame);
 }
 
-static rea::regPip<QQmlApplicationEngine*> reg_imageboard([](rea::stream<QQmlApplicationEngine*>* aInput){
+static rea2::regPip<QQmlApplicationEngine*> reg_imageboard([](rea2::stream<QQmlApplicationEngine*>* aInput){
     std::vector<QImage> imgs;
     //for (auto i = 0; i < 10; ++i)
     //    imgs.push_back(QImage("F:/3M/ttt/" + QString::number(i) + ".png"));
@@ -23,7 +23,7 @@ static rea::regPip<QQmlApplicationEngine*> reg_imageboard([](rea::stream<QQmlApp
     // Connect your frame source with the provider
     QObject::connect(src, SIGNAL(newFrameAvailable(const QVideoFrame &)), provider, SLOT(onNewVideoContentReceived(const QVideoFrame &)));
 
-    rea::pipeline::instance()->add<QString>([source, imgs](rea::stream<QString>* aInput){
+    rea2::pipeline::instance()->add<QString>([source, imgs](rea2::stream<QString>* aInput){
         int idx = 0;
         for (auto j = 0; j < 100; ++j){
             for (auto i : imgs){
@@ -34,9 +34,9 @@ static rea::regPip<QQmlApplicationEngine*> reg_imageboard([](rea::stream<QQmlApp
                 emit source->newFrameAvailable(*frm);
             }
         }
-    }, rea::Json("name", "testFrameProvider", "thread", 40));
+    }, rea2::Json("name", "testFrameProvider", "thread", 40));
 
     aInput->data()->rootContext()->setContextProperty("frameProvider", provider);
 
     aInput->out();
-}, rea::Json("name", "install1_VideoOutput"), "initRea");
+}, rea2::Json("name", "install1_VideoOutput"), "initRea");

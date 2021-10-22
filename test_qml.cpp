@@ -2,9 +2,9 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 
-static rea::regPip<QQmlApplicationEngine*> test_qml([](rea::stream<QQmlApplicationEngine*>* aInput){
+static rea2::regPip<QQmlApplicationEngine*> test_qml([](rea2::stream<QQmlApplicationEngine*>* aInput){
     auto pth = QApplication::applicationDirPath() + "/test.qml";
     //QStringLiteral();
     aInput->data()->load(pth);
     aInput->out();
-},  rea::Json("name", "loadMain"));
+},  rea2::Json("name", "loadMain"));

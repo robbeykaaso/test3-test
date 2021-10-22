@@ -7,7 +7,7 @@ import QtQuick.Controls.Universal 2.3
 import "qml/gui/Basic"
 import "qml/gui/Pipe"
 import "qml/gui/Pipe/TreeNodeView"
-import QSGBoard 1.0
+import QSGBoard 2.0
 
 ApplicationWindow {
     width: 800

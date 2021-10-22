@@ -29,7 +29,7 @@ std::wstring QString2WString(const QString& aString){
     return ret;
 }
 
-static rea::regPip<QJsonObject> test_upload_report([](rea::stream<QJsonObject>* aInput){
+static rea2::regPip<QJsonObject> test_upload_report([](rea2::stream<QJsonObject>* aInput){
     auto dt = aInput->data();
     auto type = dt.value("type").toString();
     QDir().mkdir(type);
@@ -37,7 +37,7 @@ static rea::regPip<QJsonObject> test_upload_report([](rea::stream<QJsonObject>* 
     google_breakpad::CrashReportSender sd(tp + std::wstring(L"/") + tp + L".checkpoint");
 
     std::map<std::wstring, std::wstring> prms;
-    prms.insert(std::pair<std::wstring, std::wstring>(L"id", QString2WString(rea::generateUUID())));
+    prms.insert(std::pair<std::wstring, std::wstring>(L"id", QString2WString(rea2::generateUUID())));
     prms.insert(std::pair<std::wstring, std::wstring>(L"type", tp));
     auto prm = dt.value("params").toObject();
     for (auto i : prm.keys()){
@@ -53,7 +53,7 @@ static rea::regPip<QJsonObject> test_upload_report([](rea::stream<QJsonObject>* 
     sd.SendCrashReport(URL + L":3000/test/upload", prms, fls, &ret); //type: multi/form-data
 
     aInput->out();
-}, rea::Json("name", "sendReport"));
+}, rea2::Json("name", "sendReport"));
 
 static bool dumpCallback(const wchar_t *dump_path, const wchar_t *id,
   void *context, EXCEPTION_POINTERS *exinfo,
@@ -93,7 +93,7 @@ static void uploadCallback(void* context, const DWORD crash_id){
     std::cout << "fff" << std::endl;
 }
 
-static rea::regPip<QQmlApplicationEngine*> test_breakpad([](rea::stream<QQmlApplicationEngine*>* aInput){
+static rea2::regPip<QQmlApplicationEngine*> test_breakpad([](rea2::stream<QQmlApplicationEngine*>* aInput){
     QDir().mkdir("crash");
     std::wstring pth = L"./crash", pip = L"\\\\.\\pipe\\crash0";
     bool single = true;
@@ -110,6 +110,6 @@ static void CrashFunction() {
   *i = 5;  // crash!
 }
 
-static rea::regPip<double> test_breakpad2([](rea::stream<double>* aInput){
+static rea2::regPip<double> test_breakpad2([](rea2::stream<double>* aInput){
     CrashFunction();
-}, rea::Json("name", "breakpad", "external", "qml"));
+}, rea2::Json("name", "breakpad", "external", "qml"));

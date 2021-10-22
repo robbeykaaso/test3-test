@@ -5,20 +5,20 @@
 #include <QQmlApplicationEngine>
 #include <QDateTime>
 
-class fsStorage2 : public rea::fsStorage{
+class fsStorage2 : public rea2::fsStorage{
 public:
     fsStorage2(const QString& aRoot = "") : fsStorage(aRoot){}
     void initialize() override{
-        rea::pipeline::instance()->add<bool, rea::pipeParallel>([this](rea::stream<bool>* aInput) {
+        rea2::pipeline::instance()->add<bool, rea2::pipeParallel>([this](rea2::stream<bool>* aInput) {
             QJsonObject dt;
             auto ret = readJsonObject(aInput->scope()->data<QString>("path"), dt);
             aInput->scope()->cache("data", dt);
             aInput->setData(ret)->out();
-        }, rea::Json("name", m_root + "readJsonObject2", "thread", 12));
+        }, rea2::Json("name", m_root + "readJsonObject2", "thread", 12));
     }
 };
 
-using namespace rea;
+using namespace rea2;
 static regPip<QQmlApplicationEngine*> test_stg([](stream<QQmlApplicationEngine*>*){
     static fsStorage local_storage;
     local_storage.initialize();
@@ -75,7 +75,7 @@ static regPip<QQmlApplicationEngine*> test_stg([](stream<QQmlApplicationEngine*>
     }, Json("name", tag, "external", "js"));
 
     //prove reading of file system by multithreads
-    rea::pipeline::instance()->find("readJsonObject")->nextF<bool>([](rea::stream<bool>* aInput){
+    rea2::pipeline::instance()->find("readJsonObject")->nextF<bool>([](rea2::stream<bool>* aInput){
         auto dt = aInput->scope()->data<QJsonObject>("data");
         count0--;
         std::cout << count0 << std::endl;
@@ -84,7 +84,7 @@ static regPip<QQmlApplicationEngine*> test_stg([](stream<QQmlApplicationEngine*>
         }
     }, tag + "2");
 
-    rea::pipeline::instance()->find("readJsonObject2")->nextF<bool>([](rea::stream<bool>* aInput){
+    rea2::pipeline::instance()->find("readJsonObject2")->nextF<bool>([](rea2::stream<bool>* aInput){
         auto dt = aInput->scope()->data<QJsonObject>("data");
         count1--;
         std::cout << count1 << std::endl;

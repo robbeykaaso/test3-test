@@ -28,8 +28,8 @@ project(REA_TEST)
 add_compile_definitions("GTEST_LINKED_AS_SHARED_LIBRARY=1")
 
 find_package(Qt5 COMPONENTS Widgets Core Quick SerialPort SerialBus WebEngineWidgets WebEngine Multimedia REQUIRED)
-set(REA_DIR ${CMAKE_CURRENT_LIST_DIR}/../frm/cmake)
-find_package(REA)
+set(REA2_DIR ${CMAKE_CURRENT_LIST_DIR}/../frm/cmake)
+find_package(REA2)
 
 set(my_Sources
     "qml.qrc"
@@ -56,7 +56,7 @@ set(my_Libs
     Qt5::WebEngineWidgets
     Qt5::WebEngine
     Qt5::Multimedia
-    ${REA_LIBS}
+    ${REA2_LIBS}
     )
 
 file(GLOB PLUGINS ${CMAKE_CURRENT_SOURCE_DIR}/plugin/*)
@@ -77,7 +77,7 @@ add_library(REA_TEST SHARED
 target_link_libraries(REA_TEST PRIVATE
     ${my_Libs})
 
-include_directories(${REA_INCLUDE_DIRS})
+include_directories(${REA2_INCLUDE_DIRS})
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
